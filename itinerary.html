@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>行程資訊</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  /* ===================== 設定區 ===================== */
+  :root{
+    /* 預設品牌色 (會被試算表 CSS 分頁 B2 覆寫) */
+    --brand-r:249; --brand-g:115; --brand-b:22;
+
+    --radius-lg:20px;
+    --radius-md:14px;
+    --radius-sm:10px;
+    --max-width:480px;
+  }
+
+  [data-theme="dark"]{
+    --bg:#14161b;
+    --surface:#1d2027;
+    --surface-2:#262a33;
+    --surface-3:#2f343f;
+    --text:#f4f1ec;
+    --text-muted:#9aa0ab;
+    --border:rgba(255,255,255,0.08);
+    --shadow:0 4px 16px rgba(0,0,0,0.35);
+  }
+  [data-theme="light"]{
+    --bg:#f7f4ef;
+    --surface:#ffffff;
+    --surface-2:#f0ece4;
+    --surface-3:#e6e1d8;
+    --text:#2b2823;
+    --text-muted:#7a746a;
+    --border:rgba(0,0,0,0.07);
+    --shadow:0 4px 16px rgba(0,0,0,0.08);
+  }
+
+  /* 品牌色（不透明）與輔助透明度版本 */
+  :root{
+    --brand: rgb(var(--brand-r),var(--brand-g),var(--brand-b));
+    --brand-08: rgba(var(--brand-r),var(--brand-g),var(--brand-b),0.08);
+    --brand-15: rgba(var(--brand-r),var(--brand-g),var(--brand-b),0.15);
+    --brand-25: rgba(var(--brand-r),var(--brand-g),var(--brand-b),0.25);
+    --brand-45: rgba(var(--brand-r),var(--brand-g),var(--brand-b),0.45);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    min-height:100vh;
+    transition:background .25s,color .25s;
+  }
+  .app{
+    max-width:var(--max-width);
+    margin:0 auto;
+    min-height:100vh;
+    position:relative;
+    padding:18px 16px 100px;
+  }
+
+  /* ===================== 頂部標題 ===================== */
+  .header{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    margin-bottom:16px;
+    gap:8px;
+  }
+  .trip-title{
+    font-size:20px;
+    font-weight:900;
+    line-height:1.35;
+    letter-spacing:.02em;
+    word-break:break-word;
+  }
+  .theme-toggle{
+    flex-shrink:0;
+    width:40px;height:40px;
+    border-radius:50%;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--text);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    box-shadow:var(--shadow);
+  }
+  .theme-toggle svg{width:18px;height:18px;}
+
+  /* ===================== 日期卡片區 ===================== */
+  .date-scroll{
+    display:flex;
+    gap:10px;
+    overflow-x:auto;
+    overflow-y:hidden;
+    padding-bottom:10px;
+    margin-bottom:14px;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+  }
+  .date-scroll::-webkit-scrollbar{display:none;}
+  .date-card{
+    flex:0 0 auto;
+    width:74px;height:74px;
+    border-radius:var(--radius-md);
+    background:var(--surface);
+    border:1px solid var(--border);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    cursor:pointer;
+    font-weight:700;
+    transition:transform .15s,background .15s,border-color .15s,color .15s;
+    color:var(--text);
+  }
+  .date-card .d-date{font-size:14px;line-height:1.2;}
+  .date-card .d-day{font-size:14px;line-height:1.2;font-family:"Roboto Mono",monospace;}
+  .date-card.active{
+    background:var(--brand);
+    border-color:var(--brand);
+    color:#fff;
+    transform:translateY(-2px);
+  }
+
+  /* ===================== 行程清單 ===================== */
+  #itineraryAnchor{position:relative;top:-1px;}
+
+  .day-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    overflow:hidden;
+    box-shadow:var(--shadow);
+  }
+
+  /* 條列式：同一張卡片內，一列一列 */
+  .list-row{
+    display:flex;
+    gap:14px;
+    padding:14px 16px;
+    border-bottom:1px solid var(--border);
+    position:relative;
+  }
+  .list-row:last-child{border-bottom:none;}
+  .list-row.current{
+    background:linear-gradient(90deg, var(--brand-25), var(--brand-08));
+  }
+  .list-row.current::before{
+    content:"";
+    position:absolute;left:0;top:0;bottom:0;
+    width:4px;background:var(--brand);
+  }
+  .list-row .time-col{
+    flex:0 0 64px;
+    font-family:"Roboto Mono",monospace;
+    font-weight:700;
+    font-size:13px;
+    line-height:1.5;
+    color:var(--text);
+    padding-top:1px;
+  }
+  .list-row .time-col .end-time{
+    color:var(--text-muted);
+    font-weight:500;
+  }
+  .list-row .content-col{flex:1;min-width:0;}
+  .list-row .activity{
+    font-size:15px;
+    font-weight:700;
+    line-height:1.4;
+    word-break:break-word;
+  }
+  .list-row .place,
+  .list-row .note{
+    font-size:12px;
+    color:var(--text-muted);
+    line-height:1.5;
+    margin-top:3px;
+    word-break:break-word;
+  }
+  .list-row .place a{
+    color:var(--brand);
+    text-decoration:none;
+    font-weight:500;
+  }
+  .list-row .place a:hover{text-decoration:underline;}
+
+  /* 卡片式：每個行程一張卡 */
+  .activity-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow);
+    padding:14px 16px;
+    display:flex;
+    gap:14px;
+    margin-bottom:10px;
+  }
+  .activity-card:last-child{margin-bottom:0;}
+  .activity-card.current{
+    background:linear-gradient(90deg, var(--brand-25), var(--brand-08));
+    border-color:var(--brand-45);
+  }
+  .activity-card .time-col{
+    flex:0 0 64px;
+    font-family:"Roboto Mono",monospace;
+    font-weight:700;
+    font-size:13px;
+    line-height:1.5;
+    padding-top:1px;
+  }
+  .activity-card .time-col .end-time{
+    color:var(--text-muted);
+    font-weight:500;
+  }
+  .activity-card .content-col{flex:1;min-width:0;}
+  .activity-card .activity{
+    font-size:15px;
+    font-weight:700;
+    line-height:1.4;
+    word-break:break-word;
+  }
+  .activity-card .place,
+  .activity-card .note{
+    font-size:12px;
+    color:var(--text-muted);
+    line-height:1.5;
+    margin-top:3px;
+    word-break:break-word;
+  }
+  .activity-card .place a{
+    color:var(--brand);
+    text-decoration:none;
+    font-weight:500;
+  }
+  .activity-card .place a:hover{text-decoration:underline;}
+
+  .empty-msg, .loading-msg, .error-msg{
+    text-align:center;
+    color:var(--text-muted);
+    font-size:13px;
+    padding:40px 10px;
+  }
+  .error-msg{color:#e05c5c;}
+
+  /* ===================== 浮動：檢視切換按鈕 ===================== */
+  .view-toggle{
+    position:fixed;
+    right:18px;
+    bottom:18px;
+    width:52px;height:52px;
+    border-radius:50%;
+    background:var(--brand);
+    color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    border:none;
+    cursor:pointer;
+    box-shadow:0 6px 18px rgba(0,0,0,0.35);
+    z-index:40;
+  }
+  .view-toggle svg{width:22px;height:22px;}
+
+  /* ===================== 浮動：左側選單 ===================== */
+  .menu-fab{
+    position:fixed;
+    left:18px;
+    bottom:18px;
+    width:52px;height:52px;
+    border-radius:50%;
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--text);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    box-shadow:0 6px 18px rgba(0,0,0,0.3);
+    z-index:50;
+  }
+  .menu-fab svg{width:24px;height:24px;color:var(--brand);}
+
+  .menu-fab.inline-pos{
+    position:static;
+    width:40px;height:40px;
+    box-shadow:none;
+    flex-shrink:0;
+  }
+  .menu-fab.inline-pos svg{width:20px;height:20px;}
+
+  .menu-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.45);
+    z-index:45;
+    display:none;
+  }
+  .menu-overlay.open{display:block;}
+
+  .menu-panel{
+    position:fixed;
+    left:18px;
+    bottom:80px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius-md);
+    box-shadow:0 8px 24px rgba(0,0,0,0.35);
+    overflow:hidden;
+    z-index:50;
+    min-width:160px;
+    display:none;
+  }
+  .menu-panel.open{display:block;}
+  .menu-item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:13px 16px;
+    cursor:pointer;
+    font-size:14px;
+    font-weight:500;
+    color:var(--text);
+    border-bottom:1px solid var(--border);
+  }
+  .menu-item:last-child{border-bottom:none;}
+  .menu-item:active{background:var(--surface-2);}
+  .menu-item svg{width:18px;height:18px;color:var(--brand);flex-shrink:0;}
+  .menu-item.active-page{color:var(--brand);}
+
+  /* ===================== 頁面容器 ===================== */
+  .page{display:none;}
+  .page.active{display:block;}
+
+  /* ===================== 匯率頁 ===================== */
+  .exchange-page{
+    display:flex;
+    flex-direction:column;
+    min-height:calc(100vh - 36px);
+  }
+  .exchange-top{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow);
+    padding:18px 16px;
+    margin-bottom:16px;
+  }
+  .currency-row{margin-bottom:14px;}
+  .currency-row:last-of-type{margin-bottom:0;}
+  .currency-row label{
+    display:block;
+    font-size:12px;
+    color:var(--text-muted);
+    margin-bottom:6px;
+    font-weight:500;
+  }
+  .currency-row input{
+    width:100%;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:var(--radius-sm);
+    color:var(--text);
+    font-size:24px;
+    font-weight:700;
+    font-family:"Roboto Mono",monospace;
+    padding:12px 14px;
+    text-align:right;
+    outline:none;
+    caret-color:var(--brand);
+  }
+  .currency-row input:focus{border-color:var(--brand);}
+  .exchange-actions{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:16px;
+  }
+  .clear-btn{
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    color:var(--text);
+    font-size:13px;
+    font-weight:700;
+    padding:10px 20px;
+    border-radius:var(--radius-sm);
+    cursor:pointer;
+  }
+  .clear-btn:active{background:var(--surface-3);}
+
+  .keypad{
+    margin-top:auto;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+    padding-bottom:6px;
+  }
+  .key{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius-sm);
+    color:var(--text);
+    font-size:20px;
+    font-weight:700;
+    font-family:"Roboto Mono",monospace;
+    padding:18px 0;
+    cursor:pointer;
+    box-shadow:var(--shadow);
+    user-select:none;
+  }
+  .key:active{background:var(--surface-2);}
+  .key.op{color:var(--brand);}
+  .key.equals{background:var(--brand);color:#fff;border-color:var(--brand);}
+  .key.equals:active{background:rgb(calc(var(--brand-r) - 20),calc(var(--brand-g) - 20),calc(var(--brand-b) - 20));}
+
+  /* ===================== 外部連結頁 ===================== */
+  .links-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+  }
+  .link-card{
+    aspect-ratio:1/1;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:16px 10px;
+    cursor:pointer;
+    text-decoration:none;
+    color:var(--text);
+    font-size:14px;
+    font-weight:700;
+    line-height:1.5;
+    white-space:pre-wrap;
+    word-break:break-word;
+    transition:border-color .15s;
+  }
+  .link-card:active{border-color:var(--brand);}
+
+  /* ===================== 通用 ===================== */
+  .section-title{
+    font-size:13px;
+    font-weight:700;
+    color:var(--text-muted);
+    margin:0 0 10px 2px;
+  }
+</style>
+</head>
+<body data-theme="dark">
+<div class="app">
+
+  <!-- ===================== 頁面：行程 ===================== -->
+  <div class="page active" id="page-itinerary">
+    <div class="header">
+      <div class="trip-title" id="tripTitle">行程載入中...</div>
+      <button class="theme-toggle" id="themeToggle" aria-label="切換深色/淺色模式"></button>
+    </div>
+
+    <div class="date-scroll" id="dateScroll"></div>
+
+    <div id="itineraryAnchor"></div>
+    <div id="itineraryContent">
+      <div class="loading-msg">行程資料載入中...</div>
+    </div>
+  </div>
+
+  <!-- ===================== 頁面：匯率 ===================== -->
+  <div class="page" id="page-exchange">
+    <div class="exchange-page">
+      <div class="exchange-top">
+        <div class="currency-row">
+          <label id="twdLabel">新台幣</label>
+          <input id="twdInput" type="text" inputmode="none" autocomplete="off" placeholder="0" />
+        </div>
+        <div class="currency-row">
+          <label id="fxLabel">外幣</label>
+          <input id="fxInput" type="text" inputmode="none" autocomplete="off" placeholder="0" />
+        </div>
+        <div class="exchange-actions" id="exchangeActions">
+          <button class="clear-btn" id="clearBtn">清空</button>
+        </div>
+      </div>
+
+      <div class="keypad" id="keypad">
+        <button class="key op" data-key="back">←</button>
+        <button class="key op" data-key="ac">AC</button>
+        <button class="key op" data-key="%">%</button>
+        <button class="key op" data-key="÷">÷</button>
+
+        <button class="key" data-key="7">7</button>
+        <button class="key" data-key="8">8</button>
+        <button class="key" data-key="9">9</button>
+        <button class="key op" data-key="×">×</button>
+
+        <button class="key" data-key="4">4</button>
+        <button class="key" data-key="5">5</button>
+        <button class="key" data-key="6">6</button>
+        <button class="key op" data-key="-">-</button>
+
+        <button class="key" data-key="1">1</button>
+        <button class="key" data-key="2">2</button>
+        <button class="key" data-key="3">3</button>
+        <button class="key op" data-key="+">+</button>
+
+        <button class="key" data-key="0">0</button>
+        <button class="key" data-key="000">000</button>
+        <button class="key" data-key=".">.</button>
+        <button class="key equals" data-key="=">=</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== 頁面：外部連結 ===================== -->
+  <div class="page" id="page-links">
+    <div class="header">
+      <div class="trip-title">外部連結</div>
+      <button class="theme-toggle" id="themeToggle2" aria-label="切換深色/淺色模式"></button>
+    </div>
+    <div class="links-grid" id="linksGrid">
+      <div class="loading-msg">載入中...</div>
+    </div>
+  </div>
+
+  <!-- ===================== 浮動按鈕 ===================== -->
+  <button class="view-toggle" id="viewToggle" aria-label="切換條列式/卡片式"></button>
+
+  <button class="menu-fab" id="menuFab" aria-label="開啟選單">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="16" x2="12" y2="11"></line>
+      <circle cx="12" cy="8" r="0.5" fill="currentColor"></circle>
+    </svg>
+  </button>
+
+  <div class="menu-overlay" id="menuOverlay"></div>
+  <div class="menu-panel" id="menuPanel">
+    <div class="menu-item" data-page="itinerary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+      <span>行程</span>
+    </div>
+    <div class="menu-item" data-page="exchange">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7H8a4 4 0 0 0-4 4v0a4 4 0 0 0 4 4h13"></path><polyline points="17 3 21 7 17 11"></polyline><path d="M3 17h13a4 4 0 0 0 4-4v0a4 4 0 0 0-4-4H3"></path><polyline points="7 21 3 17 7 13"></polyline></svg>
+      <span>匯率</span>
+    </div>
+    <div class="menu-item" data-page="links">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11.5 4.5"></path><path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L12.5 19.5"></path></svg>
+      <span>外部連結</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   設定區
+============================================================ */
+const params = new URLSearchParams(window.location.search);
+const SHEET_ID = params.get('sheet') || '1JdL3Rs2jaqikEvUowsSEsDMCe5veueIpzt6dQG2H0RA';
+
+const SHEET_NAMES = {
+  itinerary: '條列式大表',
+  rates: '預設匯率',
+  links: '外部連結',
+  css: 'CSS'
+};
+
+function csvUrl(sheetName){
+  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}&_=${Date.now()}`;
+}
+
+/* ============================================================
+   CSV 解析（支援引號內含逗號與換行）
+============================================================ */
+function parseCSV(text){
+  const rows = [];
+  let row = [];
+  let field = '';
+  let inQuotes = false;
+  for(let i=0;i<text.length;i++){
+    const c = text[i];
+    if(inQuotes){
+      if(c === '"'){
+        if(text[i+1] === '"'){ field += '"'; i++; }
+        else { inQuotes = false; }
+      } else {
+        field += c;
+      }
+    } else {
+      if(c === '"'){ inQuotes = true; }
+      else if(c === ','){ row.push(field); field=''; }
+      else if(c === '\r'){ /* skip */ }
+      else if(c === '\n'){ row.push(field); rows.push(row); row=[]; field=''; }
+      else { field += c; }
+    }
+  }
+  if(field.length>0 || row.length>0){ row.push(field); rows.push(row); }
+  return rows.filter(r => !(r.length===1 && r[0]===''));
+}
+
+async function fetchSheet(sheetName){
+  const res = await fetch(csvUrl(sheetName));
+  if(!res.ok) throw new Error('讀取失敗: ' + sheetName);
+  const text = await res.text();
+  return parseCSV(text);
+}
+
+function escapeHtml(str){
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+function nl2br(str){
+  return escapeHtml(str).replace(/\n/g,'<br>');
+}
+
+/* ============================================================
+   主題（深色/淺色）
+============================================================ */
+const THEME_KEY = 'itinerary_theme';
+function getStoredTheme(){
+  try{ return localStorage.getItem(THEME_KEY); }catch(e){ return null; }
+}
+function storeTheme(v){
+  try{ localStorage.setItem(THEME_KEY, v); }catch(e){}
+}
+function applyTheme(theme){
+  document.body.setAttribute('data-theme', theme);
+  renderThemeIcon();
+  storeTheme(theme);
+}
+function renderThemeIcon(){
+  const isDark = document.body.getAttribute('data-theme') === 'dark';
+  const icon = isDark
+    ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`
+    : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+  document.getElementById('themeToggle').innerHTML = icon;
+  document.getElementById('themeToggle2').innerHTML = icon;
+}
+function toggleTheme(){
+  const cur = document.body.getAttribute('data-theme');
+  applyTheme(cur === 'dark' ? 'light' : 'dark');
+}
+document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+document.getElementById('themeToggle2').addEventListener('click', toggleTheme);
+
+/* 初始化主題：預設深色 */
+applyTheme(getStoredTheme() || 'dark');
+
+/* ============================================================
+   品牌色（讀取 CSS 分頁 B2）
+============================================================ */
+function applyBrandColor(hex){
+  hex = (hex || '').trim();
+  const m = /^#?([0-9a-fA-F]{6})$/.exec(hex);
+  if(!m) return;
+  const full = m[1];
+  const r = parseInt(full.substring(0,2),16);
+  const g = parseInt(full.substring(2,4),16);
+  const b = parseInt(full.substring(4,6),16);
+  const root = document.documentElement.style;
+  root.setProperty('--brand-r', r);
+  root.setProperty('--brand-g', g);
+  root.setProperty('--brand-b', b);
+}
+
+/* ============================================================
+   視圖切換（條列式 / 卡片式）
+============================================================ */
+const VIEW_KEY = 'itinerary_view';
+let viewMode = 'list'; // 'list' or 'card'
+function getStoredView(){
+  try{ return localStorage.getItem(VIEW_KEY); }catch(e){ return null; }
+}
+function storeView(v){
+  try{ localStorage.setItem(VIEW_KEY, v); }catch(e){}
+}
+function renderViewToggleIcon(){
+  const btn = document.getElementById('viewToggle');
+  if(viewMode === 'list'){
+    // 目前條列式 -> 按下切換成卡片式：顯示卡片圖示
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>`;
+  } else {
+    // 目前卡片式 -> 按下切換成條列式：顯示清單圖示
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>`;
+  }
+}
+document.getElementById('viewToggle').addEventListener('click', () => {
+  viewMode = viewMode === 'list' ? 'card' : 'list';
+  storeView(viewMode);
+  renderViewToggleIcon();
+  renderItinerary();
+});
+viewMode = getStoredView() || 'list';
+renderViewToggleIcon();
+
+/* ============================================================
+   左側懸浮選單
+============================================================ */
+const menuFab = document.getElementById('menuFab');
+const menuPanel = document.getElementById('menuPanel');
+const menuOverlay = document.getElementById('menuOverlay');
+
+function toggleMenu(){
+  menuPanel.classList.toggle('open');
+  menuOverlay.classList.toggle('open');
+}
+menuFab.addEventListener('click', toggleMenu);
+menuOverlay.addEventListener('click', toggleMenu);
+
+document.querySelectorAll('.menu-item').forEach(item => {
+  item.addEventListener('click', () => {
+    switchPage(item.dataset.page);
+    toggleMenu();
+  });
+});
+
+/* 頁面切換 */
+let currentPage = 'itinerary';
+function switchPage(page){
+  currentPage = page;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+
+  document.querySelectorAll('.menu-item').forEach(item => {
+    item.classList.toggle('active-page', item.dataset.page === page);
+  });
+
+  // 浮動按鈕顯示/位置調整
+  const viewToggleBtn = document.getElementById('viewToggle');
+  const exchangeActions = document.getElementById('exchangeActions');
+
+  if(page === 'itinerary'){
+    viewToggleBtn.style.display = 'flex';
+    menuFab.classList.remove('inline-pos');
+    document.querySelector('.app').appendChild(menuFab);
+  } else if(page === 'exchange'){
+    viewToggleBtn.style.display = 'none';
+    menuFab.classList.add('inline-pos');
+    exchangeActions.insertBefore(menuFab, exchangeActions.firstChild);
+  } else {
+    viewToggleBtn.style.display = 'none';
+    menuFab.classList.remove('inline-pos');
+    document.querySelector('.app').appendChild(menuFab);
+  }
+
+  // 回到行程頁時，依照「目前是否為今天」重新決定預設日期
+  if(page === 'itinerary'){
+    selectInitialDate();
+    renderItinerary();
+  }
+}
+
+/* ============================================================
+   行程資料處理
+============================================================ */
+let tripTitle = '';
+let itineraryRows = []; // {date, start, end, activity, place, placeUrl, note}
+let dateList = [];      // 依出現順序的唯一日期 ['6/27','6/28',...]
+let selectedDate = null;
+let firstLoad = true;
+
+const WEEKDAYS = ['日','一','二','三','四','五','六'];
+
+function parseDateStr(dateStr, yearHint){
+  // "6/27" -> {month:6, day:27}
+  const parts = dateStr.split('/');
+  if(parts.length !== 2) return null;
+  const month = parseInt(parts[0],10);
+  const day = parseInt(parts[1],10);
+  if(isNaN(month) || isNaN(day)) return null;
+  return {month, day};
+}
+
+function buildDateTime(dateStr, timeStr){
+  const d = parseDateStr(dateStr);
+  if(!d) return null;
+  const now = new Date();
+  let year = now.getFullYear();
+  const tParts = (timeStr||'').split(':');
+  const h = parseInt(tParts[0],10) || 0;
+  const m = parseInt(tParts[1],10) || 0;
+  return new Date(year, d.month-1, d.day, h, m, 0, 0);
+}
+
+function formatDateCard(dateStr, dayIndex){
+  const d = parseDateStr(dateStr);
+  let weekday = '';
+  if(d){
+    const now = new Date();
+    const dt = new Date(now.getFullYear(), d.month-1, d.day);
+    weekday = WEEKDAYS[dt.getDay()];
+  }
+  return {
+    dateLine: `${dateStr}(${weekday})`,
+    dayLine: `DAY ${dayIndex+1}`
+  };
+}
+
+async function loadItinerary(){
+  const rows = await fetchSheet(SHEET_NAMES.itinerary);
+  // rows[0] = 活動名稱 (A1)
+  tripTitle = (rows[0] && rows[0][0]) ? rows[0][0] : '我的行程';
+  document.getElementById('tripTitle').textContent = tripTitle;
+
+  // rows[1] = 標題列（日期/開始時間/.../備註）
+  const dataRows = rows.slice(2);
+
+  itineraryRows = [];
+  dateList = [];
+
+  dataRows.forEach(r => {
+    const date = (r[0]||'').trim();
+    if(!date) return; // 沒有日期就跳過
+    const start = (r[1]||'').trim();
+    const end = (r[2]||'').trim();
+    const activity = (r[3]||'').trim();
+    const place = (r[4]||'').trim();
+    const placeUrl = (r[5]||'').trim();
+    const note = (r[6]||'').trim();
+
+    if(!dateList.includes(date)) dateList.push(date);
+
+    itineraryRows.push({date, start, end, activity, place, placeUrl, note});
+  });
+}
+
+function getTodayDateStr(){
+  const now = new Date();
+  return `${now.getMonth()+1}/${now.getDate()}`;
+}
+
+function selectInitialDate(){
+  const today = getTodayDateStr();
+  if(dateList.includes(today)){
+    selectedDate = today;
+  } else if(dateList.length > 0){
+    selectedDate = dateList[0];
+  } else {
+    selectedDate = null;
+  }
+}
+
+function isRowCurrent(row){
+  const start = buildDateTime(row.date, row.start);
+  let end = buildDateTime(row.date, row.end);
+  if(!start || !end) return false;
+  if(end <= start){
+    // 跨日：結束時間視為次日
+    end = new Date(end.getTime() + 24*60*60*1000);
+  }
+  const now = new Date();
+  return now >= start && now < end;
+}
+
+function renderDateCards(){
+  const container = document.getElementById('dateScroll');
+  container.innerHTML = '';
+  dateList.forEach((date, idx) => {
+    const {dateLine, dayLine} = formatDateCard(date, idx);
+    const card = document.createElement('div');
+    card.className = 'date-card' + (date === selectedDate ? ' active' : '');
+    card.innerHTML = `<div class="d-date">${escapeHtml(dateLine)}</div><div class="d-day">${escapeHtml(dayLine)}</div>`;
+    card.addEventListener('click', () => {
+      selectedDate = date;
+      renderDateCards();
+      renderItinerary();
+      const anchor = document.getElementById('itineraryAnchor');
+      anchor.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+    container.appendChild(card);
+  });
+}
+
+function placeHtml(row){
+  let html = '';
+  if(row.place){
+    if(row.placeUrl){
+      html += `<div class="place"><a href="${escapeHtml(row.placeUrl)}" target="_blank" rel="noopener">${nl2br(row.place)}</a></div>`;
+    } else {
+      html += `<div class="place">${nl2br(row.place)}</div>`;
+    }
+  }
+  return html;
+}
+function noteHtml(row){
+  if(row.note){
+    return `<div class="note">${nl2br(row.note)}</div>`;
+  }
+  return '';
+}
+
+function renderItinerary(){
+  const container = document.getElementById('itineraryContent');
+  container.innerHTML = '';
+
+  if(!selectedDate || itineraryRows.length === 0){
+    container.innerHTML = '<div class="empty-msg">目前沒有行程資料</div>';
+    return;
+  }
+
+  const rows = itineraryRows.filter(r => r.date === selectedDate);
+  if(rows.length === 0){
+    container.innerHTML = '<div class="empty-msg">這天沒有安排行程</div>';
+    return;
+  }
+
+  if(viewMode === 'list'){
+    const card = document.createElement('div');
+    card.className = 'day-card';
+    rows.forEach(row => {
+      const current = isRowCurrent(row);
+      const r = document.createElement('div');
+      r.className = 'list-row' + (current ? ' current' : '');
+      r.innerHTML = `
+        <div class="time-col">${escapeHtml(row.start)}<br><span class="end-time">-${escapeHtml(row.end)}</span></div>
+        <div class="content-col">
+          <div class="activity">${nl2br(row.activity)}</div>
+          ${placeHtml(row)}
+          ${noteHtml(row)}
+        </div>`;
+      card.appendChild(r);
+    });
+    container.appendChild(card);
+  } else {
+    rows.forEach(row => {
+      const current = isRowCurrent(row);
+      const c = document.createElement('div');
+      c.className = 'activity-card' + (current ? ' current' : '');
+      c.innerHTML = `
+        <div class="time-col">${escapeHtml(row.start)}<br><span class="end-time">-${escapeHtml(row.end)}</span></div>
+        <div class="content-col">
+          <div class="activity">${nl2br(row.activity)}</div>
+          ${placeHtml(row)}
+          ${noteHtml(row)}
+        </div>`;
+      container.appendChild(c);
+    });
+  }
+}
+
+/* ============================================================
+   匯率
+============================================================ */
+let twdName = '新台幣';
+let fxName = '外幣';
+let twdRate = 1;   // B1
+let fxRate = 1;    // B2
+// 關係： B1 個 TWD = B2 個外幣  =>  TWD = 外幣 * (B1/B2)  ;  外幣 = TWD * (B2/B1)
+
+let activeInput = null; // 'twd' or 'fx'
+let expr = '';          // 目前輸入中的算式字串
+
+async function loadRates(){
+  const rows = await fetchSheet(SHEET_NAMES.rates);
+  if(rows.length >= 1){
+    twdName = (rows[0][0]||'新台幣').trim();
+    twdRate = parseFloat(rows[0][1]) || 1;
+  }
+  if(rows.length >= 2){
+    fxName = (rows[1][0]||'外幣').trim();
+    fxRate = parseFloat(rows[1][1]) || 1;
+  }
+  document.getElementById('twdLabel').textContent = twdName;
+  document.getElementById('fxLabel').textContent = fxName;
+}
+
+function formatNumber(num){
+  if(!isFinite(num)) return '';
+  // 最多顯示到小數第4位，並去除多餘的0
+  let rounded = Math.round(num * 10000) / 10000;
+  let parts = rounded.toString().split('.');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return parts.join('.');
+}
+
+/* 簡易算式運算（支援 + - × ÷ %，× ÷ 優先於 + -，% 為前一數字除以100） */
+function evalExpr(str){
+  if(str === '' || str === undefined) return NaN;
+  // tokenize
+  const tokens = [];
+  let num = '';
+  for(let i=0;i<str.length;i++){
+    const c = str[i];
+    if(/[0-9.]/.test(c)){
+      num += c;
+    } else {
+      if(num !== ''){ tokens.push(num); num=''; }
+      if(c === '%'){
+        tokens.push('%');
+      } else if('+-×÷'.includes(c)){
+        tokens.push(c);
+      }
+    }
+  }
+  if(num !== '') tokens.push(num);
+  if(tokens.length === 0) return NaN;
+
+  // 處理 %（postfix，最高優先）
+  let t1 = [];
+  for(let i=0;i<tokens.length;i++){
+    if(tokens[i] === '%'){
+      const prev = t1.pop();
+      t1.push((parseFloat(prev)/100).toString());
+    } else {
+      t1.push(tokens[i]);
+    }
+  }
+
+  // 處理 × ÷
+  let t2 = [];
+  let i=0;
+  while(i < t1.length){
+    if(t1[i] === '×' || t1[i] === '÷'){
+      const a = parseFloat(t2.pop());
+      const b = parseFloat(t1[i+1]);
+      let res;
+      if(t1[i] === '×') res = a*b;
+      else res = b !== 0 ? a/b : NaN;
+      t2.push(res.toString());
+      i += 2;
+    } else {
+      t2.push(t1[i]);
+      i++;
+    }
+  }
+
+  // 處理 + -
+  let result = parseFloat(t2[0]);
+  if(isNaN(result)) return NaN;
+  i=1;
+  while(i < t2.length){
+    const op = t2[i];
+    const val = parseFloat(t2[i+1]);
+    if(op === '+') result += val;
+    else if(op === '-') result -= val;
+    i += 2;
+  }
+  return result;
+}
+
+function syncFromExpr(){
+  const val = evalExpr(expr);
+  const twdInput = document.getElementById('twdInput');
+  const fxInput = document.getElementById('fxInput');
+
+  if(activeInput === 'twd'){
+    twdInput.value = expr;
+    if(!isNaN(val)){
+      const fx = val * (fxRate/twdRate);
+      fxInput.value = formatNumber(fx);
+    } else {
+      fxInput.value = '';
+    }
+  } else if(activeInput === 'fx'){
+    fxInput.value = expr;
+    if(!isNaN(val)){
+      const twd = val * (twdRate/fxRate);
+      twdInput.value = formatNumber(twd);
+    } else {
+      twdInput.value = '';
+    }
+  }
+}
+
+function clearExchange(){
+  expr = '';
+  activeInput = null;
+  document.getElementById('twdInput').value = '';
+  document.getElementById('fxInput').value = '';
+}
+
+document.getElementById('clearBtn').addEventListener('click', clearExchange);
+
+document.getElementById('twdInput').addEventListener('focus', () => { activeInput = 'twd'; expr = ''; });
+document.getElementById('fxInput').addEventListener('focus', () => { activeInput = 'fx'; expr = ''; });
+
+/* 數字鍵盤 */
+document.getElementById('keypad').addEventListener('click', (e) => {
+  const btn = e.target.closest('.key');
+  if(!btn) return;
+  handleKey(btn.dataset.key);
+});
+
+/* 桌機鍵盤支援 */
+document.addEventListener('keydown', (e) => {
+  if(currentPage !== 'exchange') return;
+  const k = e.key;
+  if(/[0-9.]/.test(k)){ handleKey(k); e.preventDefault(); }
+  else if(k === '+'){ handleKey('+'); e.preventDefault(); }
+  else if(k === '-'){ handleKey('-'); e.preventDefault(); }
+  else if(k === '*'){ handleKey('×'); e.preventDefault(); }
+  else if(k === '/'){ handleKey('÷'); e.preventDefault(); }
+  else if(k === '%'){ handleKey('%'); e.preventDefault(); }
+  else if(k === 'Enter' || k === '='){ handleKey('='); e.preventDefault(); }
+  else if(k === 'Backspace'){ handleKey('back'); e.preventDefault(); }
+  else if(k === 'Escape'){ handleKey('ac'); e.preventDefault(); }
+});
+
+function handleKey(key){
+  if(!activeInput){
+    activeInput = 'twd';
+    document.getElementById('twdInput').focus();
+  }
+
+  if(key === 'ac'){
+    clearExchange();
+    return;
+  }
+  if(key === 'back'){
+    expr = expr.slice(0,-1);
+    syncFromExpr();
+    return;
+  }
+  if(key === '='){
+    const val = evalExpr(expr);
+    expr = isNaN(val) ? '' : (Math.round(val*10000)/10000).toString();
+    syncFromExpr();
+    return;
+  }
+  if(key === '000'){
+    expr += '000';
+    syncFromExpr();
+    return;
+  }
+  // 數字 / 運算符 / .
+  expr += key;
+  syncFromExpr();
+}
+
+/* ============================================================
+   外部連結
+============================================================ */
+async function loadLinks(){
+  const rows = await fetchSheet(SHEET_NAMES.links);
+  const grid = document.getElementById('linksGrid');
+  grid.innerHTML = '';
+  rows.forEach(r => {
+    const name = (r[0]||'').trim();
+    const url = (r[1]||'').trim();
+    if(!name || !url) return;
+    const a = document.createElement('a');
+    a.className = 'link-card';
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.textContent = name;
+    grid.appendChild(a);
+  });
+  if(grid.children.length === 0){
+    grid.innerHTML = '<div class="empty-msg">沒有外部連結</div>';
+  }
+}
+
+/* ============================================================
+   品牌色
+============================================================ */
+async function loadBrandColor(){
+  try{
+    const rows = await fetchSheet(SHEET_NAMES.css);
+    // 預期格式：第2列 = ["品牌色", "#f97316"]
+    let hex = null;
+    for(const r of rows){
+      if(r[1] && /^#?[0-9a-fA-F]{6}$/.test(r[1].trim())){
+        hex = r[1].trim();
+        break;
+      }
+    }
+    if(hex) applyBrandColor(hex);
+  }catch(e){
+    console.warn('品牌色讀取失敗，使用預設色', e);
+  }
+}
+
+/* ============================================================
+   初始化與自動刷新
+============================================================ */
+async function loadAll(isInitial){
+  try{
+    await Promise.all([
+      loadItinerary(),
+      loadRates(),
+      loadLinks(),
+      loadBrandColor()
+    ]);
+
+    if(isInitial){
+      selectInitialDate();
+    } else {
+      // 若目前選擇的日期已不存在於資料中，回退到第一天
+      if(!dateList.includes(selectedDate)){
+        selectedDate = dateList[0] || null;
+      }
+    }
+
+    renderDateCards();
+    renderItinerary();
+  }catch(e){
+    console.error(e);
+    if(isInitial){
+      document.getElementById('itineraryContent').innerHTML =
+        '<div class="error-msg">資料讀取失敗，請確認試算表已設定為「知道連結的使用者可檢視」。</div>';
+    }
+  }
+}
+
+loadAll(true);
+
+/* 每秒檢查，於每個 :00,:10,:20,:30,:40,:50 秒自動刷新資料（背景刷新，不變更使用者已選日期） */
+setInterval(() => {
+  const now = new Date();
+  if(now.getSeconds() % 10 === 0){
+    loadAll(false);
+  }
+}, 1000);
+</script>
+</body>
+</html>
