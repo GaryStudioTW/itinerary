@@ -360,20 +360,32 @@
   .page.active{display:block;}
 
   /* ===================== 匯率頁 ===================== */
-  /* 匯率頁面獨立佔滿整個可見視窗，不跟隨主容器捲動 */
+  /* 匯率頁：利用 dvh 偵測實際可見高度（含手機網址列），維持不捲動又不被遮擋 */
   #page-exchange{
     position:fixed;
     inset:0;
     display:none;
     flex-direction:column;
-    padding:16px;
-    box-sizing:border-box;
+    align-items:center;         /* 內容置中，維持左右寬度限制 */
     background:var(--bg);
     overflow:hidden;
     z-index:10;
+    /* dvh = 動態可見視窗高度（自動扣掉手機網址列） */
+    height:100dvh;
   }
   #page-exchange.active{
     display:flex;
+  }
+  /* 內容包裝：維持與其他頁相同的最大寬度與左右 padding */
+  .exchange-inner{
+    width:100%;
+    max-width:var(--max-width);
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    padding:16px 16px 16px;
+    box-sizing:border-box;
+    min-height:0;
   }
   .exchange-top{
     background:var(--surface);
@@ -428,12 +440,14 @@
   .clear-btn:active{background:rgb(calc(var(--brand-r) - 20),calc(var(--brand-g) - 20),calc(var(--brand-b) - 20));}
 
   .keypad{
-    flex:1;
+    /* 理想高度 300px；空間不足時縮小，最小不低於 200px */
+    height:min(300px, calc(100dvh - 320px));
+    min-height:200px;
+    flex-shrink:1;
     display:grid;
     grid-template-columns:repeat(4,1fr);
     grid-template-rows:repeat(5,1fr);
     gap:8px;
-    min-height:0;
   }
   .key{
     background:var(--surface);
@@ -514,6 +528,7 @@
 
   <!-- ===================== 頁面：匯率 ===================== -->
   <div class="page" id="page-exchange">
+    <div class="exchange-inner">
     <div class="exchange-top">
         <div class="currency-row">
           <label id="twdLabel">新台幣</label>
@@ -554,7 +569,8 @@
         <button class="key" data-key=".">.</button>
         <button class="key equals" data-key="=">=</button>
       </div>
-  </div>
+    </div><!-- /.exchange-inner -->
+  </div><!-- /#page-exchange -->
 
   <!-- ===================== 頁面：外部連結 ===================== -->
   <div class="page" id="page-links">
