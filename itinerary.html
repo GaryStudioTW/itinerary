@@ -445,6 +445,7 @@
     min-height:200px;
     flex-shrink:1;
     margin-top:auto; /* 推到底部，留白自動在中間 */
+    margin-bottom:20px;
     display:grid;
     grid-template-columns:repeat(4,1fr);
     grid-template-rows:repeat(5,1fr);
@@ -479,8 +480,8 @@
   }
   .link-card{
     aspect-ratio:1/1;
-    background:var(--surface);
-    border:1px solid var(--border);
+    background:var(--brand-15);
+    border:1px solid var(--brand-25);
     border-radius:var(--radius-lg);
     box-shadow:var(--shadow);
     display:flex;
@@ -871,8 +872,17 @@ async function loadItinerary(){
   document.getElementById('tripTitle').textContent = tripTitle;
   document.getElementById('tripTitleLinks').textContent = tripTitle;
 
-  // 第2列(index 1)：欄位標題列（日期/開始時間/...），從第3列(index 2)起為實際資料
-  const dataRows = rows.slice(2);
+  // 動態找到欄位標題列（A欄為「日期」的那列），從它的下一列開始讀資料
+  // 這樣不管CSV多輸出幾列空白列都能正確定位
+  let headerIdx = -1;
+  for(let i = 0; i < rows.length; i++){
+    if((rows[i][0]||'').trim() === '日期'){
+      headerIdx = i;
+      break;
+    }
+  }
+  const dataStartIdx = headerIdx >= 0 ? headerIdx + 1 : 2;
+  const dataRows = rows.slice(dataStartIdx);
 
   itineraryRows = [];
   dateList = [];
