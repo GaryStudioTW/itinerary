@@ -200,7 +200,7 @@
   }
   .list-row .place a{
     color:var(--brand);
-    text-decoration:none;
+    text-decoration:underline;
     font-weight:500;
   }
   .list-row .place a:hover{text-decoration:underline;}
@@ -261,7 +261,7 @@
   }
   .activity-card .place a{
     color:var(--brand);
-    text-decoration:none;
+    text-decoration:underline;
     font-weight:500;
   }
   .activity-card .place a:hover{text-decoration:underline;}
@@ -273,6 +273,10 @@
     padding:40px 10px;
   }
   .error-msg{color:#e05c5c;}
+  .note-link{
+    color:inherit;
+    text-decoration:underline;
+  }
 
   /* ===================== 浮動：檢視切換按鈕 ===================== */
   .view-toggle{
@@ -995,7 +999,7 @@ function placeHtml(row){
 function noteHtml(row){
   if(row.note){
     if(row.noteUrl){
-      return `<div class="note"><a href="${escapeHtml(row.noteUrl)}" target="_blank" rel="noopener" style="color:inherit;">${nl2br(row.note)}</a></div>`;
+      return `<div class="note"><a href="${escapeHtml(row.noteUrl)}" target="_blank" rel="noopener" class="note-link">${nl2br(row.note)}</a></div>`;
     }
     return `<div class="note">${nl2br(row.note)}</div>`;
   }
