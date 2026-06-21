@@ -8,17 +8,13 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
-  /* ===================== 設定區 ===================== */
   :root{
-    /* 預設品牌色 (會被試算表 CSS 分頁 B2 覆寫) */
     --brand-r:249; --brand-g:115; --brand-b:22;
-
     --radius-lg:20px;
     --radius-md:14px;
     --radius-sm:10px;
     --max-width:480px;
   }
-
   [data-theme="dark"]{
     --bg:#14161b;
     --surface:#1d2027;
@@ -39,8 +35,6 @@
     --border:rgba(0,0,0,0.07);
     --shadow:0 4px 16px rgba(0,0,0,0.08);
   }
-
-  /* 品牌色（不透明）與輔助透明度版本 */
   :root{
     --brand: rgb(var(--brand-r),var(--brand-g),var(--brand-b));
     --brand-08: rgba(var(--brand-r),var(--brand-g),var(--brand-b),0.08);
@@ -48,7 +42,6 @@
     --brand-25: rgba(var(--brand-r),var(--brand-g),var(--brand-b),0.25);
     --brand-45: rgba(var(--brand-r),var(--brand-g),var(--brand-b),0.45);
   }
-
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
@@ -67,8 +60,6 @@
     position:relative;
     padding:18px 16px 100px;
   }
-
-  /* ===================== 頂部標題 ===================== */
   .header{
     display:flex;
     align-items:flex-start;
@@ -95,8 +86,6 @@
     box-shadow:var(--shadow);
   }
   .theme-toggle svg{width:18px;height:18px;}
-
-  /* ===================== 日期卡片區 ===================== */
   .date-scroll{
     display:flex;
     gap:10px;
@@ -133,10 +122,7 @@
     color:#fff;
     transform:translateY(-2px);
   }
-
-  /* ===================== 行程清單 ===================== */
   #itineraryAnchor{position:relative;top:-1px;}
-
   .day-card{
     background:var(--surface);
     border:1px solid var(--border);
@@ -144,8 +130,6 @@
     overflow:hidden;
     box-shadow:var(--shadow);
   }
-
-  /* 條列式：同一張卡片內，一列一列 */
   .list-row{
     display:flex;
     gap:14px;
@@ -204,8 +188,6 @@
     font-weight:500;
   }
   .list-row .place a:hover{text-decoration:underline;}
-
-  /* 卡片式：每個行程一張卡，時間放大置於行程名稱上方 */
   .activity-card{
     background:var(--surface);
     border:1px solid var(--border);
@@ -265,7 +247,6 @@
     font-weight:500;
   }
   .activity-card .place a:hover{text-decoration:underline;}
-
   .empty-msg, .loading-msg, .error-msg{
     text-align:center;
     color:var(--text-muted);
@@ -277,8 +258,6 @@
     color:inherit;
     text-decoration:underline;
   }
-
-  /* ===================== 浮動：檢視切換按鈕 ===================== */
   .view-toggle{
     position:fixed;
     right:18px;
@@ -294,8 +273,6 @@
     z-index:40;
   }
   .view-toggle svg{width:22px;height:22px;}
-
-  /* ===================== 浮動：左側選單 ===================== */
   .menu-fab{
     position:fixed;
     left:18px;
@@ -311,7 +288,6 @@
     z-index:50;
   }
   .menu-fab svg{width:24px;height:24px;color:var(--brand);}
-
   .menu-fab.inline-pos{
     position:static;
     width:40px;height:40px;
@@ -319,7 +295,6 @@
     flex-shrink:0;
   }
   .menu-fab.inline-pos svg{width:20px;height:20px;}
-
   .menu-overlay{
     position:fixed;
     inset:0;
@@ -328,7 +303,6 @@
     display:none;
   }
   .menu-overlay.open{display:block;}
-
   .menu-panel{
     position:fixed;
     left:18px;
@@ -358,29 +332,22 @@
   .menu-item:active{background:var(--surface-2);}
   .menu-item svg{width:24px;height:24px;color:var(--brand);flex-shrink:0;}
   .menu-item.active-page{color:var(--brand);}
-
-  /* ===================== 頁面容器 ===================== */
   .page{display:none;}
   .page.active{display:block;}
-
-  /* ===================== 匯率頁 ===================== */
-  /* 匯率頁：利用 dvh 偵測實際可見高度（含手機網址列），維持不捲動又不被遮擋 */
   #page-exchange{
     position:fixed;
     inset:0;
     display:none;
     flex-direction:column;
-    align-items:center;         /* 內容置中，維持左右寬度限制 */
+    align-items:center;
     background:var(--bg);
     overflow:hidden;
     z-index:10;
-    /* dvh = 動態可見視窗高度（自動扣掉手機網址列） */
     height:100dvh;
   }
   #page-exchange.active{
     display:flex;
   }
-  /* 內容包裝：維持與其他頁相同的最大寬度與左右 padding */
   .exchange-inner{
     width:100%;
     max-width:var(--max-width);
@@ -442,13 +409,11 @@
     cursor:pointer;
   }
   .clear-btn:active{background:rgb(calc(var(--brand-r) - 20),calc(var(--brand-g) - 20),calc(var(--brand-b) - 20));}
-
   .keypad{
-    /* 鍵盤佔可視高度約 45%，空間不足時縮小但不低於 200px */
     height:min(45dvh, calc(100dvh - 300px));
     min-height:200px;
     flex-shrink:1;
-    margin-top:auto; /* 推到底部，留白自動在中間 */
+    margin-top:auto;
     margin-bottom:20px;
     display:grid;
     grid-template-columns:repeat(4,1fr);
@@ -475,8 +440,6 @@
   .key.op{color:var(--brand);}
   .key.equals{background:var(--brand);color:#fff;border-color:var(--brand);}
   .key.equals:active{background:rgb(calc(var(--brand-r) - 20),calc(var(--brand-g) - 20),calc(var(--brand-b) - 20));}
-
-  /* ===================== 外部連結頁 ===================== */
   .links-grid{
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -504,8 +467,6 @@
     transition:border-color .15s;
   }
   .link-card:active{border-color:var(--brand);}
-
-  /* ===================== 通用 ===================== */
   .section-title{
     font-size:13px;
     font-weight:700;
@@ -517,29 +478,25 @@
 <body data-theme="dark">
 <div class="app">
 
-  <!-- ===================== 頁面：行程 ===================== -->
   <div class="page active" id="page-itinerary">
     <div class="header">
       <div class="trip-title" id="tripTitle">行程載入中...</div>
       <button class="theme-toggle" id="themeToggle" aria-label="切換深色/淺色模式"></button>
     </div>
-
     <div class="date-scroll" id="dateScroll"></div>
-
     <div id="itineraryAnchor"></div>
     <div id="itineraryContent">
       <div class="loading-msg">行程資料載入中...</div>
     </div>
   </div>
 
-  <!-- ===================== 頁面：匯率 ===================== -->
   <div class="page" id="page-exchange">
     <div class="exchange-inner">
-    <div class="header" style="flex-shrink:0;">
-      <div class="trip-title" id="tripTitleExchange">行程載入中...</div>
-      <button class="theme-toggle" id="themeToggle3" aria-label="切換深色/淺色模式"></button>
-    </div>
-    <div class="exchange-top">
+      <div class="header" style="flex-shrink:0;">
+        <div class="trip-title" id="tripTitleExchange">行程載入中...</div>
+        <button class="theme-toggle" id="themeToggle3" aria-label="切換深色/淺色模式"></button>
+      </div>
+      <div class="exchange-top">
         <div class="currency-row">
           <label id="twdLabel">新台幣</label>
           <input id="twdInput" type="text" inputmode="none" autocomplete="off" placeholder="0" />
@@ -552,37 +509,31 @@
           <button class="clear-btn" id="clearBtn">清空</button>
         </div>
       </div>
-
       <div class="keypad" id="keypad">
         <button class="key op" data-key="back">←</button>
         <button class="key op" data-key="ac">AC</button>
         <button class="key op" data-key="%">%</button>
         <button class="key op" data-key="÷">÷</button>
-
         <button class="key" data-key="7">7</button>
         <button class="key" data-key="8">8</button>
         <button class="key" data-key="9">9</button>
         <button class="key op" data-key="×">×</button>
-
         <button class="key" data-key="4">4</button>
         <button class="key" data-key="5">5</button>
         <button class="key" data-key="6">6</button>
         <button class="key op" data-key="-">-</button>
-
         <button class="key" data-key="1">1</button>
         <button class="key" data-key="2">2</button>
         <button class="key" data-key="3">3</button>
         <button class="key op" data-key="+">+</button>
-
         <button class="key" data-key="0">0</button>
         <button class="key" data-key="000">000</button>
         <button class="key" data-key=".">.</button>
         <button class="key equals" data-key="=">=</button>
       </div>
-    </div><!-- /.exchange-inner -->
-  </div><!-- /#page-exchange -->
+    </div>
+  </div>
 
-  <!-- ===================== 頁面：外部連結 ===================== -->
   <div class="page" id="page-links">
     <div class="header">
       <div class="trip-title" id="tripTitleLinks">行程載入中...</div>
@@ -593,7 +544,6 @@
     </div>
   </div>
 
-  <!-- ===================== 浮動按鈕 ===================== -->
   <button class="view-toggle" id="viewToggle" aria-label="切換條列式/卡片式"></button>
 
   <button class="menu-fab" id="menuFab" aria-label="開啟選單">
@@ -623,9 +573,6 @@
 </div>
 
 <script>
-/* ============================================================
-   設定區
-============================================================ */
 const params = new URLSearchParams(window.location.search);
 const SHEET_ID = params.get('sheet') || '1JdL3Rs2jaqikEvUowsSEsDMCe5veueIpzt6dQG2H0RA';
 
@@ -640,9 +587,6 @@ function csvUrl(sheetName){
   return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}&_=${Date.now()}`;
 }
 
-/* ============================================================
-   CSV 解析（支援引號內含逗號與換行）
-============================================================ */
 function parseCSV(text){
   const rows = [];
   let row = [];
@@ -660,7 +604,7 @@ function parseCSV(text){
     } else {
       if(c === '"'){ inQuotes = true; }
       else if(c === ','){ row.push(field); field=''; }
-      else if(c === '\r'){ /* skip */ }
+      else if(c === '\r'){}
       else if(c === '\n'){ row.push(field); rows.push(row); row=[]; field=''; }
       else { field += c; }
     }
@@ -687,9 +631,6 @@ function nl2br(str){
   return escapeHtml(str).replace(/\n/g,'<br>');
 }
 
-/* ============================================================
-   主題（深色/淺色）
-============================================================ */
 const THEME_KEY = 'itinerary_theme';
 function getStoredTheme(){
   try{ return localStorage.getItem(THEME_KEY); }catch(e){ return null; }
@@ -718,13 +659,8 @@ function toggleTheme(){
 document.getElementById('themeToggle').addEventListener('click', toggleTheme);
 document.getElementById('themeToggle2').addEventListener('click', toggleTheme);
 document.getElementById('themeToggle3').addEventListener('click', toggleTheme);
-
-/* 初始化主題：預設深色 */
 applyTheme(getStoredTheme() || 'dark');
 
-/* ============================================================
-   品牌色（讀取 CSS 分頁 B2）
-============================================================ */
 function applyBrandColor(hex){
   hex = (hex || '').trim();
   const m = /^#?([0-9a-fA-F]{6})$/.exec(hex);
@@ -739,11 +675,8 @@ function applyBrandColor(hex){
   root.setProperty('--brand-b', b);
 }
 
-/* ============================================================
-   視圖切換（條列式 / 卡片式）
-============================================================ */
 const VIEW_KEY = 'itinerary_view';
-let viewMode = 'list'; // 'list' or 'card'
+let viewMode = 'list';
 function getStoredView(){
   try{ return localStorage.getItem(VIEW_KEY); }catch(e){ return null; }
 }
@@ -753,10 +686,8 @@ function storeView(v){
 function renderViewToggleIcon(){
   const btn = document.getElementById('viewToggle');
   if(viewMode === 'list'){
-    // 目前條列式 -> 按下切換成卡片式：顯示卡片圖示
     btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>`;
   } else {
-    // 目前卡片式 -> 按下切換成條列式：顯示清單圖示
     btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>`;
   }
 }
@@ -769,9 +700,6 @@ document.getElementById('viewToggle').addEventListener('click', () => {
 viewMode = getStoredView() || 'list';
 renderViewToggleIcon();
 
-/* ============================================================
-   左側懸浮選單
-============================================================ */
 const menuFab = document.getElementById('menuFab');
 const menuPanel = document.getElementById('menuPanel');
 const menuOverlay = document.getElementById('menuOverlay');
@@ -790,21 +718,16 @@ document.querySelectorAll('.menu-item').forEach(item => {
   });
 });
 
-/* 頁面切換 */
 let currentPage = 'itinerary';
 function switchPage(page){
   currentPage = page;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
-
   document.querySelectorAll('.menu-item').forEach(item => {
     item.classList.toggle('active-page', item.dataset.page === page);
   });
-
-  // 浮動按鈕顯示/位置調整
   const viewToggleBtn = document.getElementById('viewToggle');
   const exchangeActions = document.getElementById('exchangeActions');
-
   if(page === 'itinerary'){
     viewToggleBtn.style.display = 'flex';
     menuFab.classList.remove('inline-pos');
@@ -819,27 +742,20 @@ function switchPage(page){
     menuFab.classList.remove('inline-pos');
     document.querySelector('.app').appendChild(menuFab);
   }
-
-  // 回到行程頁時，依照「目前是否為今天」重新決定預設日期
   if(page === 'itinerary'){
     selectInitialDate();
     renderItinerary();
   }
 }
 
-/* ============================================================
-   行程資料處理
-============================================================ */
 let tripTitle = '';
-let itineraryRows = []; // {date, start, end, activity, place, placeUrl, note}
-let dateList = [];      // 依出現順序的唯一日期 ['6/27','6/28',...]
+let itineraryRows = [];
+let dateList = [];
 let selectedDate = null;
-let firstLoad = true;
 
 const WEEKDAYS = ['日','一','二','三','四','五','六'];
 
-function parseDateStr(dateStr, yearHint){
-  // "6/27" -> {month:6, day:27}
+function parseDateStr(dateStr){
   const parts = dateStr.split('/');
   if(parts.length !== 2) return null;
   const month = parseInt(parts[0],10);
@@ -852,11 +768,10 @@ function buildDateTime(dateStr, timeStr){
   const d = parseDateStr(dateStr);
   if(!d) return null;
   const now = new Date();
-  let year = now.getFullYear();
   const tParts = (timeStr||'').split(':');
   const h = parseInt(tParts[0],10) || 0;
   const m = parseInt(tParts[1],10) || 0;
-  return new Date(year, d.month-1, d.day, h, m, 0, 0);
+  return new Date(now.getFullYear(), d.month-1, d.day, h, m, 0, 0);
 }
 
 function formatDateCard(dateStr, dayIndex){
@@ -875,24 +790,18 @@ function formatDateCard(dateStr, dayIndex){
 
 async function loadItinerary(){
   const rows = await fetchSheet(SHEET_NAMES.itinerary);
-
-  // 第1列(index 0)：活動名稱在A1
   tripTitle = (rows[0] && rows[0][0]) ? rows[0][0] : '我的行程';
   tripTitle = tripTitle.replace(/\s*日期\s*$/, '').trim();
   document.title = tripTitle;
   document.getElementById('tripTitle').textContent = tripTitle;
   document.getElementById('tripTitleLinks').textContent = tripTitle;
   document.getElementById('tripTitleExchange').textContent = tripTitle;
-
-  // 不依賴標題列位置，直接用A欄是否符合日期格式(數字/數字)來判斷是否為資料列
   const dataRows = rows.filter(r => /^\d+\/\d+$/.test((r[0]||'').trim()));
-
   itineraryRows = [];
   dateList = [];
-
   dataRows.forEach(r => {
     const date = (r[0]||'').trim();
-    if(!date) return; // 沒有日期就跳過
+    if(!date) return;
     const start = (r[1]||'').trim();
     const end = (r[2]||'').trim();
     const activity = (r[3]||'').trim();
@@ -900,9 +809,7 @@ async function loadItinerary(){
     const placeUrl = (r[5]||'').trim();
     const note = (r[6]||'').trim();
     const noteUrl = (r[7]||'').trim();
-
     if(!dateList.includes(date)) dateList.push(date);
-
     itineraryRows.push({date, start, end, activity, place, placeUrl, note, noteUrl});
   });
 }
@@ -928,7 +835,6 @@ function isRowCurrent(row){
   let end = buildDateTime(row.date, row.end);
   if(!start || !end) return false;
   if(end <= start){
-    // 跨日：結束時間視為次日
     end = new Date(end.getTime() + 24*60*60*1000);
   }
   const now = new Date();
@@ -944,24 +850,21 @@ function renderDateCards(){
     card.className = 'date-card' + (date === selectedDate ? ' active' : '');
     card.innerHTML = `<div class="d-date">${escapeHtml(dateLine)}</div><div class="d-day">${escapeHtml(dayLine)}</div>`;
     card.addEventListener('click', () => {
-      if(container.dataset.dragged === '1') return; // 拖動捲動時不觸發選取
+      if(container.dataset.dragged === '1') return;
       selectedDate = date;
       renderDateCards();
       renderItinerary();
-      const anchor = document.getElementById('itineraryAnchor');
-      anchor.scrollIntoView({behavior:'smooth', block:'start'});
+      document.getElementById('itineraryAnchor').scrollIntoView({behavior:'smooth', block:'start'});
     });
     container.appendChild(card);
   });
 }
 
-/* 電腦版：以滑鼠拖曳橫向捲動日期卡片區 */
 (function enableDragScroll(){
   const el = document.getElementById('dateScroll');
   let isDown = false;
   let startX = 0;
   let scrollLeft = 0;
-
   el.addEventListener('mousedown', (e) => {
     isDown = true;
     el.dataset.dragged = '0';
@@ -969,13 +872,8 @@ function renderDateCards(){
     scrollLeft = el.scrollLeft;
     el.style.cursor = 'grabbing';
   });
-  window.addEventListener('mouseup', () => {
-    isDown = false;
-    el.style.cursor = '';
-  });
-  window.addEventListener('mouseleave', () => {
-    isDown = false;
-  });
+  window.addEventListener('mouseup', () => { isDown = false; el.style.cursor = ''; });
+  window.addEventListener('mouseleave', () => { isDown = false; });
   el.addEventListener('mousemove', (e) => {
     if(!isDown) return;
     e.preventDefault();
@@ -986,41 +884,32 @@ function renderDateCards(){
 })();
 
 function placeHtml(row){
-  let html = '';
-  if(row.place){
-    if(row.placeUrl){
-      html += `<div class="place"><a href="${escapeHtml(row.placeUrl)}" target="_blank" rel="noopener">${nl2br(row.place)}</a></div>`;
-    } else {
-      html += `<div class="place">${nl2br(row.place)}</div>`;
-    }
+  if(!row.place) return '';
+  if(row.placeUrl){
+    return `<div class="place"><a href="${escapeHtml(row.placeUrl)}" target="_blank" rel="noopener">${nl2br(row.place)}</a></div>`;
   }
-  return html;
+  return `<div class="place">${nl2br(row.place)}</div>`;
 }
 function noteHtml(row){
-  if(row.note){
-    if(row.noteUrl){
-      return `<div class="note"><a href="${escapeHtml(row.noteUrl)}" target="_blank" rel="noopener" class="note-link">${nl2br(row.note)}</a></div>`;
-    }
-    return `<div class="note">${nl2br(row.note)}</div>`;
+  if(!row.note) return '';
+  if(row.noteUrl){
+    return `<div class="note"><a href="${escapeHtml(row.noteUrl)}" target="_blank" rel="noopener" class="note-link">${nl2br(row.note)}</a></div>`;
   }
-  return '';
+  return `<div class="note">${nl2br(row.note)}</div>`;
 }
 
 function renderItinerary(){
   const container = document.getElementById('itineraryContent');
   container.innerHTML = '';
-
   if(!selectedDate || itineraryRows.length === 0){
     container.innerHTML = '<div class="empty-msg">目前沒有行程資料</div>';
     return;
   }
-
   const rows = itineraryRows.filter(r => r.date === selectedDate);
   if(rows.length === 0){
     container.innerHTML = '<div class="empty-msg">這天沒有安排行程</div>';
     return;
   }
-
   if(viewMode === 'list'){
     const card = document.createElement('div');
     card.className = 'day-card';
@@ -1063,17 +952,12 @@ function renderItinerary(){
   }
 }
 
-/* ============================================================
-   匯率
-============================================================ */
 let twdName = '新台幣';
 let fxName = '外幣';
-let twdRate = 1;   // B1
-let fxRate = 1;    // B2
-// 關係： B1 個 TWD = B2 個外幣  =>  TWD = 外幣 * (B1/B2)  ;  外幣 = TWD * (B2/B1)
-
-let activeInput = null; // 'twd' or 'fx'
-let expr = '';          // 目前輸入中的算式字串
+let twdRate = 1;
+let fxRate = 1;
+let activeInput = null;
+let expr = '';
 
 async function loadRates(){
   const rows = await fetchSheet(SHEET_NAMES.rates);
@@ -1091,14 +975,12 @@ async function loadRates(){
 
 function formatNumber(num){
   if(!isFinite(num)) return '';
-  // 最多顯示到小數第4位，並去除多餘的0
   let rounded = Math.round(num * 10000) / 10000;
   let parts = rounded.toString().split('.');
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   return parts.join('.');
 }
 
-/* 將輸入中的算式字串加上千分位顯示（不影響實際運算用的 expr） */
 function formatIntWithCommas(s){
   if(s === '') return '0';
   return s.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -1107,9 +989,7 @@ function formatNumPart(numStr){
   if(numStr === '') return '';
   const dotIdx = numStr.indexOf('.');
   if(dotIdx === -1) return formatIntWithCommas(numStr);
-  const intPart = numStr.slice(0, dotIdx);
-  const decPart = numStr.slice(dotIdx+1);
-  return formatIntWithCommas(intPart) + '.' + decPart;
+  return formatIntWithCommas(numStr.slice(0, dotIdx)) + '.' + numStr.slice(dotIdx+1);
 }
 function formatExprForDisplay(str){
   let result = '';
@@ -1127,10 +1007,8 @@ function formatExprForDisplay(str){
   return result;
 }
 
-/* 簡易算式運算（支援 + - × ÷ %，× ÷ 優先於 + -，% 為前一數字除以100） */
 function evalExpr(str){
   if(str === '' || str === undefined) return NaN;
-  // tokenize
   const tokens = [];
   let num = '';
   for(let i=0;i<str.length;i++){
@@ -1139,17 +1017,12 @@ function evalExpr(str){
       num += c;
     } else {
       if(num !== ''){ tokens.push(num); num=''; }
-      if(c === '%'){
-        tokens.push('%');
-      } else if('+-×÷'.includes(c)){
-        tokens.push(c);
-      }
+      if(c === '%') tokens.push('%');
+      else if('+-×÷'.includes(c)) tokens.push(c);
     }
   }
   if(num !== '') tokens.push(num);
   if(tokens.length === 0) return NaN;
-
-  // 處理 %（postfix，最高優先）
   let t1 = [];
   for(let i=0;i<tokens.length;i++){
     if(tokens[i] === '%'){
@@ -1159,26 +1032,19 @@ function evalExpr(str){
       t1.push(tokens[i]);
     }
   }
-
-  // 處理 × ÷
   let t2 = [];
   let i=0;
   while(i < t1.length){
     if(t1[i] === '×' || t1[i] === '÷'){
       const a = parseFloat(t2.pop());
       const b = parseFloat(t1[i+1]);
-      let res;
-      if(t1[i] === '×') res = a*b;
-      else res = b !== 0 ? a/b : NaN;
-      t2.push(res.toString());
+      t2.push((t1[i] === '×' ? a*b : (b !== 0 ? a/b : NaN)).toString());
       i += 2;
     } else {
       t2.push(t1[i]);
       i++;
     }
   }
-
-  // 處理 + -
   let result = parseFloat(t2[0]);
   if(isNaN(result)) return NaN;
   i=1;
@@ -1197,32 +1063,21 @@ function syncFromExpr(){
   const twdInput = document.getElementById('twdInput');
   const fxInput = document.getElementById('fxInput');
   const display = formatExprForDisplay(expr);
-
   if(activeInput === 'twd'){
     twdInput.value = display;
-    if(!isNaN(val)){
-      const fx = val * (fxRate/twdRate);
-      fxInput.value = formatNumber(fx);
-    }
-    // 算式不完整(如 "100+")無法計算時，外幣欄位保留上次數值不變
+    if(!isNaN(val)) fxInput.value = formatNumber(val * (fxRate/twdRate));
   } else if(activeInput === 'fx'){
     fxInput.value = display;
-    if(!isNaN(val)){
-      const twd = val * (twdRate/fxRate);
-      twdInput.value = formatNumber(twd);
-    }
-    // 算式不完整時，新台幣欄位保留上次數值不變
+    if(!isNaN(val)) twdInput.value = formatNumber(val * (twdRate/fxRate));
   }
 }
 
-/* 清空：保留目前作用中的欄位，下次輸入仍維持在同一欄位 */
 function clearExchange(){
   expr = '';
   document.getElementById('twdInput').value = '';
   document.getElementById('fxInput').value = '';
 }
 
-/* 完整重置：切換到匯率頁時使用，連同欄位選擇一起清空 */
 function resetExchangeFull(){
   expr = '';
   activeInput = null;
@@ -1231,18 +1086,15 @@ function resetExchangeFull(){
 }
 
 document.getElementById('clearBtn').addEventListener('click', clearExchange);
-
 document.getElementById('twdInput').addEventListener('focus', () => { activeInput = 'twd'; expr = ''; });
 document.getElementById('fxInput').addEventListener('focus', () => { activeInput = 'fx'; expr = ''; });
 
-/* 數字鍵盤 */
 document.getElementById('keypad').addEventListener('click', (e) => {
   const btn = e.target.closest('.key');
   if(!btn) return;
   handleKey(btn.dataset.key);
 });
 
-/* 桌機鍵盤支援 */
 document.addEventListener('keydown', (e) => {
   if(currentPage !== 'exchange') return;
   const k = e.key;
@@ -1262,35 +1114,19 @@ function handleKey(key){
     activeInput = 'twd';
     document.getElementById('twdInput').focus();
   }
-
-  if(key === 'ac'){
-    clearExchange();
-    return;
-  }
-  if(key === 'back'){
-    expr = expr.slice(0,-1);
-    syncFromExpr();
-    return;
-  }
+  if(key === 'ac'){ clearExchange(); return; }
+  if(key === 'back'){ expr = expr.slice(0,-1); syncFromExpr(); return; }
   if(key === '='){
     const val = evalExpr(expr);
     expr = isNaN(val) ? '' : (Math.round(val*10000)/10000).toString();
     syncFromExpr();
     return;
   }
-  if(key === '000'){
-    expr += '000';
-    syncFromExpr();
-    return;
-  }
-  // 數字 / 運算符 / .
+  if(key === '000'){ expr += '000'; syncFromExpr(); return; }
   expr += key;
   syncFromExpr();
 }
 
-/* ============================================================
-   外部連結
-============================================================ */
 async function loadLinks(){
   const rows = await fetchSheet(SHEET_NAMES.links);
   const grid = document.getElementById('linksGrid');
@@ -1312,13 +1148,9 @@ async function loadLinks(){
   }
 }
 
-/* ============================================================
-   品牌色
-============================================================ */
 async function loadBrandColor(){
   try{
     const rows = await fetchSheet(SHEET_NAMES.css);
-    // 預期格式：第2列 = ["品牌色", "#f97316"]
     let hex = null;
     for(const r of rows){
       if(r[1] && /^#?[0-9a-fA-F]{6}$/.test(r[1].trim())){
@@ -1327,36 +1159,22 @@ async function loadBrandColor(){
       }
     }
     if(hex) applyBrandColor(hex);
-  }catch(e){
-    console.warn('品牌色讀取失敗，使用預設色', e);
-  }
+  }catch(e){}
 }
 
-/* ============================================================
-   初始化與自動刷新
-============================================================ */
 async function loadAll(isInitial){
   try{
-    await Promise.all([
-      loadItinerary(),
-      loadRates(),
-      loadLinks(),
-      loadBrandColor()
-    ]);
-
+    await Promise.all([loadItinerary(), loadRates(), loadLinks(), loadBrandColor()]);
     if(isInitial){
       selectInitialDate();
     } else {
-      // 若目前選擇的日期已不存在於資料中，回退到第一天
       if(!dateList.includes(selectedDate)){
         selectedDate = dateList[0] || null;
       }
     }
-
     renderDateCards();
     renderItinerary();
   }catch(e){
-    console.error(e);
     if(isInitial){
       document.getElementById('itineraryContent').innerHTML =
         '<div class="error-msg">資料讀取失敗，請確認試算表已設定為「知道連結的使用者可檢視」。</div>';
@@ -1366,12 +1184,8 @@ async function loadAll(isInitial){
 
 loadAll(true);
 
-/* 每秒檢查，於每個 :00,:10,:20,:30,:40,:50 秒自動刷新資料（背景刷新，不變更使用者已選日期） */
 setInterval(() => {
-  const now = new Date();
-  if(now.getSeconds() % 10 === 0){
-    loadAll(false);
-  }
+  if(new Date().getSeconds() % 10 === 0) loadAll(false);
 }, 1000);
 </script>
 </body>
