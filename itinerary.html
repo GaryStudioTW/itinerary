@@ -895,10 +895,11 @@ async function loadItinerary(){
     const place = (r[4]||'').trim();
     const placeUrl = (r[5]||'').trim();
     const note = (r[6]||'').trim();
+    const noteUrl = (r[7]||'').trim();
 
     if(!dateList.includes(date)) dateList.push(date);
 
-    itineraryRows.push({date, start, end, activity, place, placeUrl, note});
+    itineraryRows.push({date, start, end, activity, place, placeUrl, note, noteUrl});
   });
 }
 
@@ -993,6 +994,9 @@ function placeHtml(row){
 }
 function noteHtml(row){
   if(row.note){
+    if(row.noteUrl){
+      return `<div class="note"><a href="${escapeHtml(row.noteUrl)}" target="_blank" rel="noopener" style="color:inherit;">${nl2br(row.note)}</a></div>`;
+    }
     return `<div class="note">${nl2br(row.note)}</div>`;
   }
   return '';
