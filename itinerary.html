@@ -559,7 +559,7 @@
         <button class="key" data-key="3">3</button>
         <button class="key op" data-key="+">+</button>
         <button class="key" data-key="0">0</button>
-        <button class="key" data-key="000">000</button>
+        <button class="key" data-key="00">00</button>
         <button class="key" data-key=".">.</button>
         <button class="key equals" data-key="=">=</button>
       </div>
@@ -1169,7 +1169,7 @@ function handleKey(key){
     syncFromExpr();
     return;
   }
-  if(key === '000'){ expr += '000'; syncFromExpr(); return; }
+  if(key === '00'){ expr += '00'; syncFromExpr(); return; }
   expr += key;
   syncFromExpr();
 }
