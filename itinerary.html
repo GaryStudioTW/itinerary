@@ -42,6 +42,17 @@
     --brand-25: rgba(var(--brand-r),var(--brand-g),var(--brand-b),0.25);
     --brand-45: rgba(var(--brand-r),var(--brand-g),var(--brand-b),0.45);
   }
+  [data-theme="dark"]{
+    --accent-r:56; --accent-g:189; --accent-b:168;
+  }
+  [data-theme="light"]{
+    --accent-r:13; --accent-g:148; --accent-b:136;
+  }
+  :root{
+    --accent: rgb(var(--accent-r),var(--accent-g),var(--accent-b));
+    --accent-15: rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.15);
+    --accent-45: rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.45);
+  }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
@@ -257,6 +268,25 @@
   .note-link{
     color:inherit;
     text-decoration:underline;
+  }
+  .tag{
+    display:inline-block;
+    font-size:11px;
+    font-weight:700;
+    line-height:1.4;
+    padding:2px 8px;
+    border-radius:999px;
+    margin-right:5px;
+    vertical-align:1px;
+    white-space:nowrap;
+    background:var(--brand-15);
+    border:1px solid var(--brand-45);
+    color:var(--brand);
+  }
+  .tag.meal{
+    background:var(--accent-15);
+    border-color:var(--accent-45);
+    color:var(--accent);
   }
   .view-toggle{
     position:fixed;
@@ -744,7 +774,9 @@ function switchPage(page){
   }
   if(page === 'itinerary'){
     selectInitialDate();
+    renderDateCards();
     renderItinerary();
+    if(selectedDate === getTodayDateStr()) scrollToCurrentRow();
   }
 }
 
@@ -841,6 +873,11 @@ function isRowCurrent(row){
   return now >= start && now < end;
 }
 
+function scrollToCurrentRow(){
+  const el = document.querySelector('#itineraryContent .current');
+  if(el) el.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
 function renderDateCards(){
   const container = document.getElementById('dateScroll');
   container.innerHTML = '';
@@ -854,7 +891,7 @@ function renderDateCards(){
       selectedDate = date;
       renderDateCards();
       renderItinerary();
-      document.getElementById('itineraryAnchor').scrollIntoView({behavior:'smooth', block:'start'});
+      if(date === getTodayDateStr()) scrollToCurrentRow();
     });
     container.appendChild(card);
   });
@@ -882,6 +919,14 @@ function renderDateCards(){
     el.scrollLeft = scrollLeft - dx;
   });
 })();
+
+const MEAL_TAGS = ['早餐','午餐','晚餐'];
+function renderTags(str){
+  return nl2br(str).replace(/\[([^\[\]]+)\]/g, (m, label) => {
+    const isMeal = MEAL_TAGS.includes(label.trim());
+    return `<span class="tag${isMeal ? ' meal' : ''}">${label}</span>`;
+  });
+}
 
 function placeHtml(row){
   if(!row.place) return '';
@@ -924,7 +969,7 @@ function renderItinerary(){
           <div class="t-end">${escapeHtml(row.end)}</div>
         </div>
         <div class="content-col">
-          <div class="activity">${nl2br(row.activity)}</div>
+          <div class="activity">${renderTags(row.activity)}</div>
           ${placeHtml(row)}
           ${noteHtml(row)}
         </div>`;
@@ -943,7 +988,7 @@ function renderItinerary(){
           <div class="t-end">${escapeHtml(row.end)}</div>
         </div>
         <div class="content-col">
-          <div class="activity">${nl2br(row.activity)}</div>
+          <div class="activity">${renderTags(row.activity)}</div>
           ${placeHtml(row)}
           ${noteHtml(row)}
         </div>`;
