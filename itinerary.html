@@ -79,11 +79,23 @@
     gap:8px;
   }
   .trip-title{
+    display:flex;
+    align-items:center;
+    gap:8px;
     font-size:20px;
     font-weight:900;
     line-height:1.35;
     letter-spacing:.02em;
     word-break:break-word;
+  }
+  .logo-img{
+    display:none;
+    height:1.35em;
+    width:auto;
+    max-width:40px;
+    object-fit:contain;
+    flex-shrink:0;
+    border-radius:6px;
   }
   .theme-toggle{
     flex-shrink:0;
@@ -514,7 +526,7 @@
 
   <div class="page active" id="page-itinerary">
     <div class="header">
-      <div class="trip-title" id="tripTitle">行程載入中...</div>
+      <div class="trip-title" id="tripTitle"><img class="logo-img" alt=""><span>行程載入中...</span></div>
       <button class="theme-toggle" id="themeToggle" aria-label="切換深色/淺色模式"></button>
     </div>
     <div class="date-scroll" id="dateScroll"></div>
@@ -527,7 +539,7 @@
   <div class="page" id="page-exchange">
     <div class="exchange-inner">
       <div class="header" style="flex-shrink:0;">
-        <div class="trip-title" id="tripTitleExchange">行程載入中...</div>
+        <div class="trip-title" id="tripTitleExchange"><img class="logo-img" alt=""><span>行程載入中...</span></div>
         <button class="theme-toggle" id="themeToggle3" aria-label="切換深色/淺色模式"></button>
       </div>
       <div class="exchange-top">
@@ -570,7 +582,7 @@
 
   <div class="page" id="page-links">
     <div class="header">
-      <div class="trip-title" id="tripTitleLinks">行程載入中...</div>
+      <div class="trip-title" id="tripTitleLinks"><img class="logo-img" alt=""><span>行程載入中...</span></div>
       <button class="theme-toggle" id="themeToggle2" aria-label="切換深色/淺色模式"></button>
     </div>
     <div class="links-grid" id="linksGrid">
@@ -829,9 +841,9 @@ async function loadItinerary(){
   tripTitle = (rows[0] && rows[0][0]) ? rows[0][0] : '我的行程';
   tripTitle = tripTitle.replace(/\s*日期\s*$/, '').trim();
   document.title = tripTitle;
-  document.getElementById('tripTitle').textContent = tripTitle;
-  document.getElementById('tripTitleLinks').textContent = tripTitle;
-  document.getElementById('tripTitleExchange').textContent = tripTitle;
+  document.querySelector('#tripTitle span').textContent = tripTitle;
+  document.querySelector('#tripTitleLinks span').textContent = tripTitle;
+  document.querySelector('#tripTitleExchange span').textContent = tripTitle;
   const dataRows = rows.filter(r => /^\d+\/\d+$/.test((r[0]||'').trim()));
   itineraryRows = [];
   dateList = [];
@@ -1197,6 +1209,23 @@ async function loadLinks(){
   }
 }
 
+function driveIdFromUrl(url){
+  let m = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if(m) return m[1];
+  m = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if(m) return m[1];
+  return null;
+}
+
+function applyLogo(url){
+  const id = driveIdFromUrl(url);
+  const src = id ? `https://lh3.googleusercontent.com/d/${id}` : url;
+  document.querySelectorAll('.logo-img').forEach(img => {
+    img.src = src;
+    img.style.display = 'block';
+  });
+}
+
 async function loadBrandColor(){
   try{
     const rows = await fetchSheet(SHEET_NAMES.css);
@@ -1208,6 +1237,9 @@ async function loadBrandColor(){
       }
     }
     if(hex) applyBrandColor(hex);
+
+    const logoUrl = rows[2] && rows[2][1] ? rows[2][1].trim() : '';
+    if(logoUrl) applyLogo(logoUrl);
   }catch(e){}
 }
 
