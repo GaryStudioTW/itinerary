@@ -59,7 +59,7 @@
   body{
     background:var(--bg);
     color:var(--text);
-    font-family:"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+    font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
     -webkit-font-smoothing:antialiased;
     overflow-x:hidden;
     min-height:100vh;
@@ -280,6 +280,9 @@
   .fine-table td:first-child .lbl{
     font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
   }
+  .emoji-fix{
+    font-family:"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji",sans-serif;
+  }
   .fine-table td .pts{
     font-family:"Roboto Mono",monospace;
     font-weight:700;
@@ -371,7 +374,7 @@
   <div class="nav-scroll">
     <a class="nav-chip" href="#speed">🚦 限速罰則</a>
     <a class="nav-chip" href="#rules">⚠️ 特有規則</a>
-    <a class="nav-chip" href="#sos">🆘 緊急聯絡</a>
+    <a class="nav-chip" href="#sos"><span class="emoji-fix">🆘</span> 緊急聯絡</a>
   </div>
 
   <!-- 限速罰則 -->
@@ -379,7 +382,7 @@
     <div class="eyebrow">🚦 重要核心</div>
     <h2>限速與超速罰則</h2>
 
-    <h3>先搞懂：<span class="c-blue">青切符</span> vs <span class="c-red">赤切符</span>（台灣沒有這名稱）</h3>
+    <h3>先搞懂：<span class="c-blue">青切符</span>vs<span class="c-red">赤切符</span>（台灣沒有這名稱）</h3>
     <p>日本開超速罰單分兩種顏色，差別不是「多繳一點錢」而已，是<span class="c-blue">行政處分</span>跟<span class="c-red">刑事處分</span>的天差地別——這在台灣沒有對應說法，務必先看懂：</p>
 
     <div class="kip-wrap">
@@ -411,8 +414,8 @@
     <p>一般道路<span class="hl">60</span>、高速道路<span class="hl">100</span>（部分路段120）km/h，<b>有標誌就以標誌為準</b>。法律上超過1km/h就算違規，沒有官方「超速10免罰」這回事。</p>
 
     <table class="fine-table">
-      <caption>一般道路（法定 60）</caption>
-      <thead><tr><th>超速 km/h</th><th>點數</th><th>罰款</th></tr></thead>
+      <caption>一般道路（法定60）</caption>
+      <thead><tr><th>超速km/h</th><th>點數</th><th>罰款</th></tr></thead>
       <tbody>
         <tr class="blue"><td><span class="lbl">未滿</span>15</td><td class="pts">1</td><td>9,000円 <span class="tag-blue">青</span></td></tr>
         <tr class="blue"><td>15–20</td><td class="pts">1</td><td>12,000円 <span class="tag-blue">青</span></td></tr>
@@ -424,8 +427,8 @@
     </table>
 
     <table class="fine-table">
-      <caption>高速道路（法定 100）</caption>
-      <thead><tr><th>超速 km/h</th><th>點數</th><th>罰款</th></tr></thead>
+      <caption>高速道路（法定100）</caption>
+      <thead><tr><th>超速km/h</th><th>點數</th><th>罰款</th></tr></thead>
       <tbody>
         <tr class="blue"><td><span class="lbl">未滿</span>15</td><td class="pts">1</td><td>9,000円 <span class="tag-blue">青</span></td></tr>
         <tr class="blue"><td>15–20</td><td class="pts">1</td><td>12,000円 <span class="tag-blue">青</span></td></tr>
@@ -470,7 +473,7 @@
         <span class="num">119</span>
       </a>
       <a class="tel-btn blank" href="#">
-        <span class="tl"><span class="name">租車公司緊急專線</span><span class="desc">取車時填上（Toyota Rent 等）</span></span>
+        <span class="tl"><span class="name">租車公司緊急專線</span><span class="desc">取車時填上（Toyota Rent等）</span></span>
         <span class="num">＿＿＿</span>
       </a>
     </div>
