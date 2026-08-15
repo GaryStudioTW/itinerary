@@ -277,6 +277,9 @@
     font-weight:700;
     white-space:nowrap;
   }
+  .fine-table td:first-child .lbl{
+    font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  }
   .fine-table td .pts{
     font-family:"Roboto Mono",monospace;
     font-weight:700;
@@ -401,22 +404,22 @@
 
     <div class="threshold">
       <span class="big">🔴 分水嶺：超過這裡就從青切符變赤切符</span>
-      一般道路超速 <b>≧30km/h</b>、高速道路超速 <b>≧40km/h</b> → 直接升級成<span class="c-red">刑事處分＋一發免停</span>。低於此為<span class="c-blue">青切符</span>（繳反則金）。
+      一般道路超速<b>≧30km/h</b>、高速道路超速<b>≧40km/h</b> → 直接升級成<span class="c-red">刑事處分＋一發免停</span>。低於此為<span class="c-blue">青切符</span>（繳反則金）。
     </div>
 
     <h3>法定速度</h3>
-    <p>一般道路 <span class="hl">60</span>、高速道路 <span class="hl">100</span>（部分路段 120）km/h，<b>有標誌就以標誌為準</b>。法律上超過 1km/h 就算違規，沒有官方「＋10 免罰」這回事。</p>
+    <p>一般道路<span class="hl">60</span>、高速道路<span class="hl">100</span>（部分路段120）km/h，<b>有標誌就以標誌為準</b>。法律上超過1km/h就算違規，沒有官方「超速10免罰」這回事。</p>
 
     <table class="fine-table">
       <caption>一般道路（法定 60）</caption>
       <thead><tr><th>超速 km/h</th><th>點數</th><th>罰款</th></tr></thead>
       <tbody>
-        <tr class="blue"><td>未滿 15</td><td class="pts">1</td><td>9,000 円 <span class="tag-blue">青</span></td></tr>
-        <tr class="blue"><td>15–20</td><td class="pts">1</td><td>12,000 円 <span class="tag-blue">青</span></td></tr>
-        <tr class="blue"><td>20–25</td><td class="pts">2</td><td>15,000 円 <span class="tag-blue">青</span></td></tr>
-        <tr class="blue"><td>25–30</td><td class="pts">3</td><td>18,000 円 <span class="tag-blue">青</span></td></tr>
-        <tr class="red"><td>30–50</td><td class="pts">6</td><td>罰金 6–8 萬円・免停 30 天 <span class="tag-red">赤</span></td></tr>
-        <tr class="red"><td>50 以上</td><td class="pts">12</td><td>罰金（60↑可能 10 萬）・免停 90 天 <span class="tag-red">赤</span></td></tr>
+        <tr class="blue"><td><span class="lbl">未滿</span>15</td><td class="pts">1</td><td>9,000円 <span class="tag-blue">青</span></td></tr>
+        <tr class="blue"><td>15–20</td><td class="pts">1</td><td>12,000円 <span class="tag-blue">青</span></td></tr>
+        <tr class="blue"><td>20–25</td><td class="pts">2</td><td>15,000円 <span class="tag-blue">青</span></td></tr>
+        <tr class="blue"><td>25–30</td><td class="pts">3</td><td>18,000円 <span class="tag-blue">青</span></td></tr>
+        <tr class="red"><td>30–50</td><td class="pts">6</td><td>罰金6–8萬円・免停30天 <span class="tag-red">赤</span></td></tr>
+        <tr class="red"><td>50<span class="lbl">以上</span></td><td class="pts">12</td><td>罰金（60↑可能10萬）・免停90天 <span class="tag-red">赤</span></td></tr>
       </tbody>
     </table>
 
@@ -424,17 +427,17 @@
       <caption>高速道路（法定 100）</caption>
       <thead><tr><th>超速 km/h</th><th>點數</th><th>罰款</th></tr></thead>
       <tbody>
-        <tr class="blue"><td>未滿 15</td><td class="pts">1</td><td>9,000 円 <span class="tag-blue">青</span></td></tr>
-        <tr class="blue"><td>15–20</td><td class="pts">1</td><td>12,000 円 <span class="tag-blue">青</span></td></tr>
-        <tr class="blue"><td>20–25</td><td class="pts">2</td><td>15,000 円 <span class="tag-blue">青</span></td></tr>
-        <tr class="blue"><td>25–30</td><td class="pts">3</td><td>18,000 円 <span class="tag-blue">青</span></td></tr>
-        <tr class="blue"><td>30–35</td><td class="pts">3</td><td>25,000 円 <span class="tag-blue">青</span></td></tr>
-        <tr class="blue"><td>35–40</td><td class="pts">3</td><td>35,000 円 <span class="tag-blue">青</span></td></tr>
-        <tr class="red"><td>40–50</td><td class="pts">6</td><td>罰金（裁判）・免停 30 天 <span class="tag-red">赤</span></td></tr>
-        <tr class="red"><td>50 以上</td><td class="pts">12</td><td>罰金（裁判）・免停 90 天 <span class="tag-red">赤</span></td></tr>
+        <tr class="blue"><td><span class="lbl">未滿</span>15</td><td class="pts">1</td><td>9,000円 <span class="tag-blue">青</span></td></tr>
+        <tr class="blue"><td>15–20</td><td class="pts">1</td><td>12,000円 <span class="tag-blue">青</span></td></tr>
+        <tr class="blue"><td>20–25</td><td class="pts">2</td><td>15,000円 <span class="tag-blue">青</span></td></tr>
+        <tr class="blue"><td>25–30</td><td class="pts">3</td><td>18,000円 <span class="tag-blue">青</span></td></tr>
+        <tr class="blue"><td>30–35</td><td class="pts">3</td><td>25,000円 <span class="tag-blue">青</span></td></tr>
+        <tr class="blue"><td>35–40</td><td class="pts">3</td><td>35,000円 <span class="tag-blue">青</span></td></tr>
+        <tr class="red"><td>40–50</td><td class="pts">6</td><td>罰金（裁判）・免停30天 <span class="tag-red">赤</span></td></tr>
+        <tr class="red"><td>50<span class="lbl">以上</span></td><td class="pts">12</td><td>罰金（裁判）・免停90天 <span class="tag-red">赤</span></td></tr>
       </tbody>
     </table>
-    <p class="table-note">白話：<b>一般道飆過 +30、高速飆過 +40</b>，你的日本自駕直接變成「上檢察署報到、留交通前科、當場沒收駕照」。山區覺得沒人也別催下去。</p>
+    <p class="table-note">白話：<b>一般道飆過+30、高速飆過+40</b>，你的日本自駕直接變成「上檢察署報到、留交通前科、當場沒收駕照」。山區覺得沒人也別催下去。</p>
   </div>
 
   <!-- 特有規則 -->
@@ -442,14 +445,14 @@
     <div class="eyebrow">⚠️ 一定要注意</div>
     <h2>日本特有規則</h2>
     <ul class="rule-list">
-      <li><span class="ico">🛑</span><b>「止まれ」（紅色倒三角）＝完全停死</b>。輪胎停轉、停 2–3 秒、左右看，不是減速滑過去。警察最愛在這埋伏。</li>
-      <li><span class="ico">🚶</span><b>行人是神</b>。斑馬線有人要過就<b>必須停讓</b>，不讓＝扣點＋罰錢。</li>
+      <li><span class="ico">🛑</span><b>「止まれ」（紅色倒三角）＝完全停死</b>。輪胎停轉、停3秒、左右看，不是減速滑過去。警察最愛在這埋伏。</li>
+      <li><span class="ico">🚶</span><b>行人最大</b>。斑馬線有人要過就<b>必須停讓</b>，不讓＝扣點＋罰錢。</li>
       <li><span class="ico">🚃</span><b>平交道一律完全停車</b>，搖窗確認，即使沒柵欄。</li>
       <li><span class="ico">🍺</span><b>酒駕零容忍</b>。喝一口就別碰方向盤——同車者、借車者、賣酒的都會連坐。</li>
-      <li><span class="ico">📵</span><b>開車禁碰手機</b>。導航用固定架＋語音，手拿看螢幕就可能被抓。</li>
+      <li><span class="ico">📵</span><b>開車禁碰手機</b>。導航用固定架+語音，手拿看螢幕就可能被抓。</li>
       <li><span class="ico">🚥</span><b>紅燈不能右轉</b>（你靠左，右轉＝橫穿對向），只有綠色箭頭亮才能走。</li>
       <li><span class="ico">🔕</span><b>幾乎不按喇叭</b>。窄路互讓、進主道乖乖等，別用泰國式硬鑽。</li>
-      <li><span class="ico">💨</span><b>雨刷 vs 方向燈</b>：日本車方向燈在右、雨刷在左。第一天轉彎多半會刷幾次，正常，笑一笑就好。</li>
+      <li><span class="ico">💨</span><b>雨刷vs方向燈</b>：日本車方向燈在右、雨刷在左。第一天轉彎多半會刷幾次，正常，笑一笑就好。</li>
     </ul>
   </div>
 
@@ -474,7 +477,7 @@
   </div>
 
   <div class="foot">
-    本頁面資訊為 AI 製作，AI 可能會出錯<br>祝您行車平安
+    本頁面資訊為AI製作，AI可能會出錯<br>祝您行車平安
   </div>
 
 </div>
