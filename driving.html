@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>自駕須知</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --brand-r:249; --brand-g:115; --brand-b:22;
+    --radius-lg:20px;
+    --radius-md:14px;
+    --radius-sm:10px;
+    --max-width:480px;
+  }
+  [data-theme="dark"]{
+    --bg:#14161b;
+    --surface:#1d2027;
+    --surface-2:#262a33;
+    --surface-3:#2f343f;
+    --text:#f4f1ec;
+    --text-muted:#9aa0ab;
+    --border:rgba(255,255,255,0.08);
+    --shadow:0 4px 16px rgba(0,0,0,0.35);
+    --accent-r:56; --accent-g:189; --accent-b:168;
+    --danger-r:255; --danger-g:107; --danger-b:107;
+  }
+  [data-theme="light"]{
+    --bg:#f7f4ef;
+    --surface:#ffffff;
+    --surface-2:#f0ece4;
+    --surface-3:#e6e1d8;
+    --text:#2b2823;
+    --text-muted:#7a746a;
+    --border:rgba(0,0,0,0.07);
+    --shadow:0 4px 16px rgba(0,0,0,0.08);
+    --accent-r:13; --accent-g:148; --accent-b:136;
+    --danger-r:198; --danger-g:40; --danger-b:40;
+  }
+  :root{
+    --brand: rgb(var(--brand-r),var(--brand-g),var(--brand-b));
+    --brand-08: rgba(var(--brand-r),var(--brand-g),var(--brand-b),0.08);
+    --brand-15: rgba(var(--brand-r),var(--brand-g),var(--brand-b),0.15);
+    --brand-25: rgba(var(--brand-r),var(--brand-g),var(--brand-b),0.25);
+    --accent: rgb(var(--accent-r),var(--accent-g),var(--accent-b));
+    --accent-15: rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.15);
+    --danger: rgb(var(--danger-r),var(--danger-g),var(--danger-b));
+    --danger-12: rgba(var(--danger-r),var(--danger-g),var(--danger-b),0.12);
+    --danger-30: rgba(var(--danger-r),var(--danger-g),var(--danger-b),0.30);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    min-height:100vh;
+    transition:background .25s,color .25s;
+  }
+  .app{
+    max-width:var(--max-width);
+    margin:0 auto;
+    min-height:100vh;
+    position:relative;
+    padding:18px 16px 60px;
+  }
+  .header{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    margin-bottom:6px;
+    gap:8px;
+  }
+  .trip-title{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:20px;
+    font-weight:900;
+    line-height:1.35;
+    letter-spacing:.02em;
+    word-break:break-word;
+  }
+  .trip-title .sub{
+    display:block;
+    font-size:12px;
+    font-weight:500;
+    color:var(--text-muted);
+    letter-spacing:.04em;
+    margin-top:2px;
+  }
+  .theme-toggle{
+    flex-shrink:0;
+    width:40px;height:40px;
+    border-radius:50%;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--text);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    box-shadow:var(--shadow);
+  }
+  .theme-toggle svg{width:18px;height:18px;}
+  .back-link{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:13px;
+    font-weight:700;
+    color:var(--brand);
+    text-decoration:none;
+    margin-bottom:14px;
+  }
+  .nav-scroll{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding-bottom:12px;
+    margin-bottom:6px;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+  }
+  .nav-scroll::-webkit-scrollbar{display:none;}
+  .nav-chip{
+    flex:0 0 auto;
+    padding:8px 14px;
+    border-radius:999px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--text);
+    font-size:13px;
+    font-weight:700;
+    text-decoration:none;
+    box-shadow:var(--shadow);
+    white-space:nowrap;
+  }
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow);
+    padding:16px 16px 18px;
+    margin-bottom:16px;
+    scroll-margin-top:12px;
+  }
+  .eyebrow{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--brand);
+    margin-bottom:6px;
+    font-family:"Roboto Mono",monospace;
+  }
+  .card h2{
+    font-size:18px;
+    font-weight:900;
+    margin:0 0 12px;
+    line-height:1.3;
+  }
+  .card h3{
+    font-size:15px;
+    font-weight:900;
+    margin:16px 0 8px;
+    line-height:1.3;
+  }
+  .card p{margin:0 0 10px;font-size:14px;line-height:1.7;}
+  .card p:last-child{margin-bottom:0;}
+  .rule-list{list-style:none;margin:0;padding:0;}
+  .rule-list li{
+    position:relative;
+    padding:10px 0 10px 30px;
+    font-size:14px;
+    line-height:1.65;
+    border-bottom:1px solid var(--border);
+  }
+  .rule-list li:last-child{border-bottom:none;}
+  .rule-list li .ico{
+    position:absolute;left:0;top:10px;
+    font-size:16px;line-height:1.4;
+  }
+  .rule-list li b{font-weight:900;}
+  .hl{color:var(--brand);font-weight:900;}
+  .hl-accent{color:var(--accent);font-weight:900;}
+
+  /* 青赤對照卡 */
+  .kip-wrap{
+    display:flex;
+    gap:10px;
+    margin:4px 0 6px;
+  }
+  .kip{
+    flex:1 1 0;
+    min-width:0;
+    border-radius:var(--radius-md);
+    padding:12px 12px 14px;
+    border:1px solid var(--border);
+  }
+  .kip.blue{background:var(--accent-15);border-color:var(--accent);}
+  .kip.red{background:var(--danger-12);border-color:var(--danger-30);}
+  .kip .kip-name{
+    font-size:15px;font-weight:900;line-height:1.3;margin-bottom:2px;
+  }
+  .kip.blue .kip-name{color:var(--accent);}
+  .kip.red .kip-name{color:var(--danger);}
+  .kip .kip-jp{
+    font-size:11px;color:var(--text-muted);font-family:"Roboto Mono",monospace;margin-bottom:8px;
+  }
+  .kip .kip-line{
+    font-size:12.5px;line-height:1.6;
+    padding:3px 0;
+    border-top:1px dashed var(--border);
+  }
+  .kip .kip-line:first-of-type{border-top:none;}
+  .kip .kip-line b{font-weight:900;}
+
+  .threshold{
+    border:1px solid var(--danger-30);
+    background:var(--danger-12);
+    border-radius:var(--radius-md);
+    padding:12px 14px;
+    margin:10px 0 6px;
+    font-size:13.5px;
+    line-height:1.7;
+  }
+  .threshold .big{
+    display:block;
+    font-size:13px;
+    font-weight:900;
+    color:var(--danger);
+    margin-bottom:4px;
+    letter-spacing:.02em;
+  }
+
+  .fine-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+    margin:6px 0 4px;
+  }
+  .fine-table caption{
+    text-align:left;
+    font-weight:900;
+    font-size:14px;
+    padding:6px 0;
+  }
+  .fine-table th,.fine-table td{
+    padding:8px 6px;
+    text-align:left;
+    border-bottom:1px solid var(--border);
+    vertical-align:middle;
+  }
+  .fine-table th{
+    font-size:11px;
+    color:var(--text-muted);
+    font-weight:700;
+    letter-spacing:.03em;
+  }
+  .fine-table td:first-child{
+    font-family:"Roboto Mono",monospace;
+    font-weight:700;
+    white-space:nowrap;
+  }
+  .fine-table td .pts{
+    font-family:"Roboto Mono",monospace;
+    font-weight:700;
+  }
+  .fine-table tr.blue td{
+    background:var(--accent-15);
+    color:var(--text);
+  }
+  .fine-table tr.blue td:first-child{color:var(--accent);}
+  .fine-table tr.red td{
+    background:var(--danger-12);
+    color:var(--text);
+  }
+  .fine-table tr.red td:first-child{color:var(--danger);}
+  .tag-red{
+    display:inline-block;
+    font-size:10px;
+    font-weight:900;
+    color:#fff;
+    background:var(--danger);
+    border-radius:6px;
+    padding:1px 6px;
+    margin-left:4px;
+    vertical-align:middle;
+    letter-spacing:.03em;
+  }
+  .tag-blue{
+    display:inline-block;
+    font-size:10px;
+    font-weight:900;
+    color:#fff;
+    background:var(--accent);
+    border-radius:6px;
+    padding:1px 6px;
+    margin-left:4px;
+    vertical-align:middle;
+    letter-spacing:.03em;
+  }
+  .table-note{font-size:11px;color:var(--text-muted);line-height:1.6;margin-top:8px;}
+
+  .tel-grid{display:flex;flex-direction:column;gap:10px;}
+  .tel-btn{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:14px 16px;
+    border-radius:var(--radius-md);
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    color:var(--text);
+    text-decoration:none;
+  }
+  .tel-btn .tl{display:flex;flex-direction:column;gap:2px;}
+  .tel-btn .tl .name{font-size:14px;font-weight:900;}
+  .tel-btn .tl .desc{font-size:12px;color:var(--text-muted);}
+  .tel-btn .num{
+    font-family:"Roboto Mono",monospace;
+    font-size:17px;
+    font-weight:700;
+    color:var(--brand);
+    white-space:nowrap;
+  }
+  .tel-btn.blank .num{color:var(--text-muted);}
+
+  .foot{
+    text-align:center;
+    font-size:11px;
+    color:var(--text-muted);
+    line-height:1.9;
+    margin-top:22px;
+    padding:0 8px;
+  }
+</style>
+</head>
+<body data-theme="dark">
+<div class="app">
+
+  <div class="header">
+    <div class="trip-title">
+      🚗 自駕須知
+      <span class="sub">首次日本自駕 · 安全上路</span>
+    </div>
+    <button class="theme-toggle" id="themeToggle" aria-label="切換深淺色"></button>
+  </div>
+
+  <a class="back-link" id="backLink" href="./itinerary.html">← 返回行程</a>
+
+  <div class="nav-scroll">
+    <a class="nav-chip" href="#speed">🚦 限速罰則</a>
+    <a class="nav-chip" href="#rules">⚠️ 特有規則</a>
+    <a class="nav-chip" href="#sos">🆘 緊急聯絡</a>
+  </div>
+
+  <!-- 限速罰則 -->
+  <div class="card" id="speed">
+    <div class="eyebrow">🚦 核心 · 你最在意的</div>
+    <h2>限速與超速罰則</h2>
+
+    <h3>先搞懂：青切符 vs 赤切符（台灣沒有這名稱）</h3>
+    <p>日本開超速罰單分兩種顏色，差別不是「多繳一點錢」而已，是<b>行政處分</b>跟<b>刑事處分</b>的天差地別——這在台灣沒有對應說法，務必先看懂：</p>
+
+    <div class="kip-wrap">
+      <div class="kip blue">
+        <div class="kip-name">青切符</div>
+        <div class="kip-jp">青キップ / 輕微</div>
+        <div class="kip-line"><b>行政處分</b>（罰單）</div>
+        <div class="kip-line">繳「<b>反則金</b>」了事</div>
+        <div class="kip-line"><b>不留前科</b></div>
+        <div class="kip-line">扣點＋繳錢結案</div>
+      </div>
+      <div class="kip red">
+        <div class="kip-name">赤切符</div>
+        <div class="kip-jp">赤キップ / 嚴重</div>
+        <div class="kip-line"><b>刑事處分</b>（等同犯罪）</div>
+        <div class="kip-line">上檢察署、判「<b>罰金</b>」</div>
+        <div class="kip-line"><b>留前科</b>（交通前科）</div>
+        <div class="kip-line">通常＋一發免停</div>
+      </div>
+    </div>
+    <p class="table-note">重點：日本的「反則金」才是我們認知的一般罰單；「罰金」在日本是<b>刑事罰</b>，要跑檢察署／簡易法院、會留前科。名字很像但完全兩回事。</p>
+
+    <div class="threshold">
+      <span class="big">🔴 分水嶺：超過這裡就從青切符變赤切符</span>
+      一般道路超速 <b>≧30km/h</b>、高速道路超速 <b>≧40km/h</b> → 直接升級成<b>刑事處分＋一發免停</b>。低於此為青切符（繳反則金）。
+    </div>
+
+    <h3>法定速度</h3>
+    <p>一般道路 <span class="hl">60</span>、高速道路 <span class="hl">100</span>（部分路段 120）km/h，<b>有標誌就以標誌為準</b>。法律上超過 1km/h 就算違規，沒有官方「＋10 免罰」這回事。</p>
+
+    <table class="fine-table">
+      <caption>一般道路（法定 60）</caption>
+      <thead><tr><th>超速 km/h</th><th>點數</th><th>罰款</th></tr></thead>
+      <tbody>
+        <tr class="blue"><td>未滿 15</td><td class="pts">1</td><td>9,000 円 <span class="tag-blue">青</span></td></tr>
+        <tr class="blue"><td>15–20</td><td class="pts">1</td><td>12,000 円 <span class="tag-blue">青</span></td></tr>
+        <tr class="blue"><td>20–25</td><td class="pts">2</td><td>15,000 円 <span class="tag-blue">青</span></td></tr>
+        <tr class="blue"><td>25–30</td><td class="pts">3</td><td>18,000 円 <span class="tag-blue">青</span></td></tr>
+        <tr class="red"><td>30–50</td><td class="pts">6</td><td>罰金 6–8 萬円・免停 30 天 <span class="tag-red">赤</span></td></tr>
+        <tr class="red"><td>50 以上</td><td class="pts">12</td><td>罰金（60↑可能 10 萬）・免停 90 天 <span class="tag-red">赤</span></td></tr>
+      </tbody>
+    </table>
+
+    <table class="fine-table">
+      <caption>高速道路（法定 100）</caption>
+      <thead><tr><th>超速 km/h</th><th>點數</th><th>罰款</th></tr></thead>
+      <tbody>
+        <tr class="blue"><td>未滿 15</td><td class="pts">1</td><td>9,000 円 <span class="tag-blue">青</span></td></tr>
+        <tr class="blue"><td>15–20</td><td class="pts">1</td><td>12,000 円 <span class="tag-blue">青</span></td></tr>
+        <tr class="blue"><td>20–25</td><td class="pts">2</td><td>15,000 円 <span class="tag-blue">青</span></td></tr>
+        <tr class="blue"><td>25–30</td><td class="pts">3</td><td>18,000 円 <span class="tag-blue">青</span></td></tr>
+        <tr class="blue"><td>30–35</td><td class="pts">3</td><td>25,000 円 <span class="tag-blue">青</span></td></tr>
+        <tr class="blue"><td>35–40</td><td class="pts">3</td><td>35,000 円 <span class="tag-blue">青</span></td></tr>
+        <tr class="red"><td>40–50</td><td class="pts">6</td><td>罰金（裁判）・免停 30 天 <span class="tag-red">赤</span></td></tr>
+        <tr class="red"><td>50 以上</td><td class="pts">12</td><td>罰金（裁判）・免停 90 天 <span class="tag-red">赤</span></td></tr>
+      </tbody>
+    </table>
+    <p class="table-note">白話：<b>一般道飆過 +30、高速飆過 +40</b>，你的日本自駕直接變成「上檢察署報到、留交通前科、當場沒收駕照」。山區覺得沒人也別催下去。</p>
+  </div>
+
+  <!-- 特有規則 -->
+  <div class="card" id="rules">
+    <div class="eyebrow">⚠️ 泰國經驗救不了你</div>
+    <h2>日本特有規則</h2>
+    <ul class="rule-list">
+      <li><span class="ico">🛑</span><b>「止まれ」（紅色倒三角）＝完全停死</b>。輪胎停轉、停 2–3 秒、左右看，不是減速滑過去。警察最愛在這埋伏。</li>
+      <li><span class="ico">🚶</span><b>行人是神</b>。斑馬線有人要過就<b>必須停讓</b>，不讓＝扣點＋罰錢。</li>
+      <li><span class="ico">🚃</span><b>平交道一律完全停車</b>，搖窗確認，即使沒柵欄。</li>
+      <li><span class="ico">🍺</span><b>酒駕零容忍</b>。喝一口就別碰方向盤——同車者、借車者、賣酒的都會連坐。</li>
+      <li><span class="ico">📵</span><b>開車禁碰手機</b>。導航用固定架＋語音，手拿看螢幕就可能被抓。</li>
+      <li><span class="ico">🚥</span><b>紅燈不能右轉</b>（你靠左，右轉＝橫穿對向），只有綠色箭頭亮才能走。</li>
+      <li><span class="ico">🔕</span><b>幾乎不按喇叭</b>。窄路互讓、進主道乖乖等，別用泰國式硬鑽。</li>
+      <li><span class="ico">💨</span><b>雨刷 vs 方向燈</b>：日本車方向燈在右、雨刷在左。第一天轉彎多半會刷幾次，正常，笑一笑就好。</li>
+    </ul>
+  </div>
+
+  <!-- 緊急聯絡 -->
+  <div class="card" id="sos">
+    <div class="eyebrow">🆘 車上必備</div>
+    <h2>緊急聯絡</h2>
+    <div class="tel-grid">
+      <a class="tel-btn" href="tel:110">
+        <span class="tl"><span class="name">警察（事故・報案）</span><span class="desc">交通事故一定要報警取事故證明</span></span>
+        <span class="num">110</span>
+      </a>
+      <a class="tel-btn" href="tel:119">
+        <span class="tl"><span class="name">救護・消防</span><span class="desc">有人受傷、火災</span></span>
+        <span class="num">119</span>
+      </a>
+      <a class="tel-btn" href="tel:0570008139">
+        <span class="tl"><span class="name">JAF 道路救援</span><span class="desc">拋錨・爆胎・沒油（短碼 #8139）</span></span>
+        <span class="num">#8139</span>
+      </a>
+      <a class="tel-btn blank" href="#">
+        <span class="tl"><span class="name">租車公司緊急專線</span><span class="desc">取車時填上（Toyota Rent 等）</span></span>
+        <span class="num">＿＿＿</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="foot">
+    本頁面為 AI 製作，AI 可能會出錯<br>祝您行車平安
+  </div>
+
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const SHEET_ID = params.get('sheet') || '1JdL3Rs2jaqikEvUowsSEsDMCe5veueIpzt6dQG2H0RA';
+
+const SHEET_NAMES = { css: 'CSS' };
+
+function csvUrl(sheetName){
+  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}&_=${Date.now()}`;
+}
+
+function parseCSV(text){
+  const rows = [];
+  let row = [], field = '', inQuotes = false;
+  for(let i=0;i<text.length;i++){
+    const c = text[i];
+    if(inQuotes){
+      if(c === '"'){ if(text[i+1] === '"'){ field += '"'; i++; } else { inQuotes = false; } }
+      else { field += c; }
+    } else {
+      if(c === '"'){ inQuotes = true; }
+      else if(c === ','){ row.push(field); field=''; }
+      else if(c === '\r'){}
+      else if(c === '\n'){ row.push(field); rows.push(row); row=[]; field=''; }
+      else { field += c; }
+    }
+  }
+  if(field.length>0 || row.length>0){ row.push(field); rows.push(row); }
+  return rows.filter(r => !(r.length===1 && r[0]===''));
+}
+
+async function fetchSheet(sheetName){
+  const res = await fetch(csvUrl(sheetName));
+  if(!res.ok) throw new Error('讀取失敗: ' + sheetName);
+  return parseCSV(await res.text());
+}
+
+/* ===== 主題（與主頁共用 localStorage key，深淺色同步）===== */
+const THEME_KEY = 'itinerary_theme';
+function getStoredTheme(){ try{ return localStorage.getItem(THEME_KEY); }catch(e){ return null; } }
+function storeTheme(v){ try{ localStorage.setItem(THEME_KEY, v); }catch(e){} }
+function renderThemeIcon(){
+  const isDark = document.body.getAttribute('data-theme') === 'dark';
+  const icon = isDark
+    ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`
+    : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+  document.getElementById('themeToggle').innerHTML = icon;
+}
+function applyTheme(theme){
+  document.body.setAttribute('data-theme', theme);
+  renderThemeIcon();
+  storeTheme(theme);
+}
+document.getElementById('themeToggle').addEventListener('click', () => {
+  applyTheme(document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+});
+applyTheme(getStoredTheme() || 'dark');
+
+/* ===== 品牌色：與主頁相同方式，從 CSS 分頁 B 欄的 hex 動態載入 ===== */
+function applyBrandColor(hex){
+  hex = (hex || '').trim();
+  const m = /^#?([0-9a-fA-F]{6})$/.exec(hex);
+  if(!m) return;
+  const full = m[1];
+  const root = document.documentElement.style;
+  root.setProperty('--brand-r', parseInt(full.substring(0,2),16));
+  root.setProperty('--brand-g', parseInt(full.substring(2,4),16));
+  root.setProperty('--brand-b', parseInt(full.substring(4,6),16));
+}
+async function loadBrandColor(){
+  try{
+    const rows = await fetchSheet(SHEET_NAMES.css);
+    for(const r of rows){
+      if(r[1] && /^#?[0-9a-fA-F]{6}$/.test(r[1].trim())){ applyBrandColor(r[1].trim()); break; }
+    }
+  }catch(e){}
+}
+loadBrandColor();
+
+/* 返回連結帶上目前的 sheet 參數，回主頁維持同一行程 */
+(function(){
+  const s = params.get('sheet');
+  if(s) document.getElementById('backLink').href = './itinerary.html?sheet=' + encodeURIComponent(s);
+})();
+</script>
+</body>
+</html>
