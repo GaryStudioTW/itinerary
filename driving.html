@@ -24,8 +24,10 @@
     --text-muted:#9aa0ab;
     --border:rgba(255,255,255,0.08);
     --shadow:0 4px 16px rgba(0,0,0,0.35);
-    --accent-r:56; --accent-g:189; --accent-b:168;
-    --danger-r:255; --danger-g:107; --danger-b:107;
+    --accent-r:74; --accent-g:200; --accent-b:120;
+    --danger-r:255; --danger-g:92; --danger-b:92;
+    --accent-solid:#22a054;
+    --danger-solid:#d23a3a;
   }
   [data-theme="light"]{
     --bg:#f7f4ef;
@@ -36,8 +38,10 @@
     --text-muted:#7a746a;
     --border:rgba(0,0,0,0.07);
     --shadow:0 4px 16px rgba(0,0,0,0.08);
-    --accent-r:13; --accent-g:148; --accent-b:136;
-    --danger-r:198; --danger-g:40; --danger-b:40;
+    --accent-r:22; --accent-g:140; --accent-b:70;
+    --danger-r:200; --danger-g:42; --danger-b:42;
+    --accent-solid:#168a42;
+    --danger-solid:#c62828;
   }
   :root{
     --brand: rgb(var(--brand-r),var(--brand-g),var(--brand-b));
@@ -203,16 +207,21 @@
     padding:12px 12px 14px;
     border:1px solid var(--border);
   }
-  .kip.blue{background:var(--accent-15);border-color:var(--accent);}
-  .kip.red{background:var(--danger-12);border-color:var(--danger-30);}
+  .kip.blue{background:rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.18);border:1px solid var(--accent);border-left:5px solid var(--accent);}
+  .kip.red{background:rgba(var(--danger-r),var(--danger-g),var(--danger-b),0.18);border:1px solid var(--danger);border-left:5px solid var(--danger);}
   .kip .kip-name{
-    font-size:15px;font-weight:900;line-height:1.3;margin-bottom:2px;
+    display:inline-block;font-size:14px;font-weight:900;line-height:1.3;
+    margin-bottom:8px;padding:3px 12px;border-radius:999px;color:#fff;
   }
-  .kip.blue .kip-name{color:var(--accent);}
-  .kip.red .kip-name{color:var(--danger);}
+  .kip.blue .kip-name{background:var(--accent-solid);}
+  .kip.red .kip-name{background:var(--danger-solid);}
   .kip .kip-jp{
     font-size:11px;color:var(--text-muted);font-family:"Roboto Mono",monospace;margin-bottom:8px;
   }
+  .kip.blue .kip-jp{color:var(--accent);}
+  .kip.red .kip-jp{color:var(--danger);}
+  .c-blue{color:var(--accent);font-weight:900;}
+  .c-red{color:var(--danger);font-weight:900;}
   .kip .kip-line{
     font-size:12.5px;line-height:1.6;
     padding:3px 0;
@@ -273,21 +282,21 @@
     font-weight:700;
   }
   .fine-table tr.blue td{
-    background:var(--accent-15);
+    background:rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.28);
     color:var(--text);
   }
-  .fine-table tr.blue td:first-child{color:var(--accent);}
+  .fine-table tr.blue td:first-child{color:var(--accent);box-shadow:inset 4px 0 0 var(--accent);}
   .fine-table tr.red td{
-    background:var(--danger-12);
+    background:rgba(var(--danger-r),var(--danger-g),var(--danger-b),0.28);
     color:var(--text);
   }
-  .fine-table tr.red td:first-child{color:var(--danger);}
+  .fine-table tr.red td:first-child{color:var(--danger);box-shadow:inset 4px 0 0 var(--danger);}
   .tag-red{
     display:inline-block;
     font-size:10px;
     font-weight:900;
     color:#fff;
-    background:var(--danger);
+    background:var(--danger-solid);
     border-radius:6px;
     padding:1px 6px;
     margin-left:4px;
@@ -299,7 +308,7 @@
     font-size:10px;
     font-weight:900;
     color:#fff;
-    background:var(--accent);
+    background:var(--accent-solid);
     border-radius:6px;
     padding:1px 6px;
     margin-left:4px;
@@ -367,8 +376,8 @@
     <div class="eyebrow">🚦 核心 · 你最在意的</div>
     <h2>限速與超速罰則</h2>
 
-    <h3>先搞懂：青切符 vs 赤切符（台灣沒有這名稱）</h3>
-    <p>日本開超速罰單分兩種顏色，差別不是「多繳一點錢」而已，是<b>行政處分</b>跟<b>刑事處分</b>的天差地別——這在台灣沒有對應說法，務必先看懂：</p>
+    <h3>先搞懂：<span class="c-blue">青切符</span> vs <span class="c-red">赤切符</span>（台灣沒有這名稱）</h3>
+    <p>日本開超速罰單分兩種顏色，差別不是「多繳一點錢」而已，是<span class="c-blue">行政處分</span>跟<span class="c-red">刑事處分</span>的天差地別——這在台灣沒有對應說法，務必先看懂：</p>
 
     <div class="kip-wrap">
       <div class="kip blue">
@@ -388,11 +397,11 @@
         <div class="kip-line">通常＋一發免停</div>
       </div>
     </div>
-    <p class="table-note">重點：日本的「反則金」才是我們認知的一般罰單；「罰金」在日本是<b>刑事罰</b>，要跑檢察署／簡易法院、會留前科。名字很像但完全兩回事。</p>
+    <p class="table-note">重點：日本的「<span class="c-blue">反則金</span>」才是我們認知的一般罰單；「<span class="c-red">罰金</span>」在日本是<b>刑事罰</b>，要跑檢察署／簡易法院、會留前科。名字很像但完全兩回事。</p>
 
     <div class="threshold">
       <span class="big">🔴 分水嶺：超過這裡就從青切符變赤切符</span>
-      一般道路超速 <b>≧30km/h</b>、高速道路超速 <b>≧40km/h</b> → 直接升級成<b>刑事處分＋一發免停</b>。低於此為青切符（繳反則金）。
+      一般道路超速 <b>≧30km/h</b>、高速道路超速 <b>≧40km/h</b> → 直接升級成<span class="c-red">刑事處分＋一發免停</span>。低於此為<span class="c-blue">青切符</span>（繳反則金）。
     </div>
 
     <h3>法定速度</h3>
@@ -456,10 +465,6 @@
       <a class="tel-btn" href="tel:119">
         <span class="tl"><span class="name">救護・消防</span><span class="desc">有人受傷、火災</span></span>
         <span class="num">119</span>
-      </a>
-      <a class="tel-btn" href="tel:0570008139">
-        <span class="tl"><span class="name">JAF 道路救援</span><span class="desc">拋錨・爆胎・沒油（短碼 #8139）</span></span>
-        <span class="num">#8139</span>
       </a>
       <a class="tel-btn blank" href="#">
         <span class="tl"><span class="name">租車公司緊急專線</span><span class="desc">取車時填上（Toyota Rent 等）</span></span>
